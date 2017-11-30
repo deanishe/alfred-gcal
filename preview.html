@@ -1,0 +1,124 @@
+{{ define "event" }}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>{{ .Title }}</title>
+		<style>
+			html {
+				background-color: {{ .Colour }};
+				color: #333;
+			  box-sizing: border-box;
+			  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			  font-size: 16px;
+			}
+
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			*, *:before, *:after {
+			  box-sizing: inherit;
+			}
+
+			body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+			  margin: 0;
+			  padding: 0;
+			  font-weight: normal;
+			}
+
+			h1, h2, h3, h4, h5, h6 {
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+
+			a, a:active, a:visited {
+				color: #0000fc;
+				/*font-weight: bold;*/
+				text-decoration: none;
+			}
+
+			h1 > a, h1 > a:visited {
+				/*text-decoration: none;*/
+				color: #333;
+			}
+
+			body {
+				background-color: #fdfdfd;
+				margin-left: auto;
+				margin-right: auto;
+				max-width: 600px;
+				padding: 32px 16px;
+			}
+
+			header {
+				margin: 0 32px;
+			}
+
+			table {
+				margin-top: 16px;
+			}
+
+			th, td {
+				padding: 5px;
+			}
+
+			th {
+				text-align: right;
+			}
+
+			ol, ul {
+			  list-style: none;
+			}
+
+			img {
+			  max-width: 100%;
+			  height: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1><a href="{{ .URL }}">{{ .Title }}</a></h1>
+			<p>in {{ .CalendarTitle }}</p>
+		</header>
+		<table>
+			<tr>
+				<th>Date</th>
+				<td>{{ .Start.Format "Monday, 2 Jan 2006" }}</td>
+			</tr>
+			<tr>
+				<th>Time</th>
+				<td>{{ .Start.Format "15:04" }} &ndash; {{ .End.Format "15:04" }}</td>
+			</tr>
+			{{ if .Location }}
+			<tr>
+				<th>Location</th>
+				<td><a href="{{ .MapURL }}">{{ .Location }}</a></td>
+			</tr>
+			{{ end }}
+			{{ if .Description }}
+			<tr>
+				<th>Description</th>
+				<td>{{ .Description }}</td>
+			</tr>
+			{{ end }}
+		</table>
+	</body>
+</html>
+{{ end }}
+
+{{ define "fail" }}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Event Not Found</title>
+	</head>
+	<body>
+		<h1>Event Not Found</h1>
+		<p>Couldn't find an event for ID <strong>{{ . }}</strong></p>
+	</body>
+</html>
+{{ end }}
