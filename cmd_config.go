@@ -20,6 +20,7 @@ import (
 
 // doConfig shows configuration options.
 func doConfig() error {
+	wf.Var("CALENDAR_APP", "") // Open links in default browser, not CALENDAR_APP
 	wf.NewItem("Active Calendars").
 		Subtitle("Turn calendars on/off").
 		Icon(iconCalOn).

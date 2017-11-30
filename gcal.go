@@ -32,7 +32,7 @@ var (
 	repo      = "deanishe/alfred-gcal"
 	helpURL   = "https://github.com/deanishe/alfred-gcal/issues"
 	readmeURL = "https://github.com/deanishe/alfred-gcal/blob/master/README.md"
-	forumURL  = "https://alfredforum.com"
+	forumURL  = "https://www.alfredforum.com/topic/11016-google-calendar-view/"
 
 	usage = `
 gcal (events|calendars|toggle) [options] [<query>]

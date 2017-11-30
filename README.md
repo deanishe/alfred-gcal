@@ -23,7 +23,7 @@ View Google Calendar events in [Alfred][alfred].
 Download & installation
 -----------------------
 
-Grab the workflow from [GitHub releases][download]. Download the `Google-Calendar-Events-X.X.alfredworkflow` file and double-click it to install.
+Grab the workflow from [GitHub releases][download]. Download the `Google-Calendar-View-X.X.alfredworkflow` file and double-click it to install.
 
 
 <a name="usage"></a>
@@ -99,7 +99,7 @@ The icons are from [Elusive Icons][elusive], [Font Awesome][awesome], [Material 
 [alfred]: https://alfredapp.com/
 [alfredforum]: https://www.alfredforum.com/
 [awgo]: https://github.com/deanishe/awgo
-[forumthread]: https://www.alfredforum.com/
+[forumthread]: https://www.alfredforum.com/topic/11016-google-calendar-view/
 [download]: https://github.com/deanishe/alfred-gcal/releases/latest
 [issues]: https://github.com/deanishe/alfred-gcal/issues
 [sil]: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL

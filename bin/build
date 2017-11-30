@@ -89,7 +89,7 @@ test -d "${builddir}" && { log "Cleaning build directory ..."; cleanup }
 
 log "Building executable(s) ..."
 go build $verbose -o ./gcal .
-zipname="Google-Calendar-Events-${alfred_workflow_version}.alfredworkflow"
+zipname="Google-Calendar-View-${alfred_workflow_version}.alfredworkflow"
 outpath="${root}/${zipname}"
 # $devmode && { sym="-s" }
 

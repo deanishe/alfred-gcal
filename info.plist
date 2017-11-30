@@ -430,7 +430,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Google Calendar Events</string>
+	<string>Google Calendar View</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -1532,7 +1532,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.0.1</string>
+	<string>0.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
