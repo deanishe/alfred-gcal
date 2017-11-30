@@ -196,7 +196,7 @@
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
-				<false/>
+				<true/>
 			</dict>
 		</array>
 		<key>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</key>
@@ -341,7 +341,7 @@
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
-				<false/>
+				<true/>
 			</dict>
 		</array>
 		<key>BC6819C2-77D8-4E53-BA51-2787F2087BFD</key>
@@ -1532,7 +1532,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.1</string>
+	<string>0.1.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
