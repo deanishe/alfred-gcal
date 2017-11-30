@@ -31,7 +31,7 @@ const (
 var (
 	repo      = "deanishe/alfred-gcal"
 	helpURL   = "https://github.com/deanishe/alfred-gcal/issues"
-	readmeURL = "https://github.com/deanishe/alfred-gcal/"
+	readmeURL = "https://github.com/deanishe/alfred-gcal/blob/master/README.md"
 	forumURL  = "https://alfredforum.com"
 
 	usage = `
