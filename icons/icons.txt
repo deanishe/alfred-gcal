@@ -13,6 +13,7 @@
 # filename        font name       colour    icon name
 
 icon              material        5485F3    calendar
+calendar-today    material        03AE03    calendar
 calendar-on       material        03AE03    calendar-check
 calendar-off      material        B00000    calendar-close
 day               weathericons    F8AC30    sunrise

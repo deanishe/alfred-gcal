@@ -29,8 +29,10 @@ import (
 var (
 	apiURL = "http://icons.deanishe.net/icon"
 	// Static icons
+	iconDefault         = &aw.Icon{Value: "icon.png"} // Workflow icon
 	iconCalOff          = &aw.Icon{Value: "icons/calendar-off.png"}
 	iconCalOn           = &aw.Icon{Value: "icons/calendar-on.png"}
+	iconCalToday        = &aw.Icon{Value: "icons/calendar-today.png"}
 	iconDay             = &aw.Icon{Value: "icons/day.png"}
 	iconDelete          = &aw.Icon{Value: "icons/trash.png"}
 	iconDocs            = &aw.Icon{Value: "icons/docs.png"}

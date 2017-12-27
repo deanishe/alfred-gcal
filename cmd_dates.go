@@ -54,11 +54,16 @@ func doDates() error {
 		if parsed {
 			title, sub = longDate, title
 		}
+		icon := iconDefault
+		if t.Equal(today) {
+			icon = iconCalToday
+		}
 		wf.NewItem(title).
 			Subtitle(sub).
 			Arg(dateStr).
 			Autocomplete(dateStr).
-			Valid(true)
+			Valid(true).
+			Icon(icon)
 	}
 
 	wf.SendFeedback()
