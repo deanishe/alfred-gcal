@@ -95,7 +95,7 @@ func doEvents() error {
 		}
 
 		icon := gen.Icon(eventIconFont, eventIconName, e.Colour)
-		sub := fmt.Sprintf("%s – %s / %s", e.Start.Format("15:04"), e.End.Format("15:04"), e.CalendarTitle)
+		sub := fmt.Sprintf("%s – %s / %s", e.Start.Local().Format("15:04"), e.End.Local().Format("15:04"), e.CalendarTitle)
 		it := wf.NewItem(e.Title).
 			Subtitle(sub).
 			Icon(icon).
