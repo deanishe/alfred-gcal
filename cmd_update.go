@@ -25,14 +25,14 @@ import (
 // Check if a new version of the workflow is available.
 func doUpdateWorkflow() error {
 	log.Print("[update] checking for new version of workflow…")
-	wf.TextErrors = true
+	wf.Configure(aw.TextErrors(true))
 	return wf.CheckForUpdate()
 }
 
 // Fetch and cache list of calendars.
 func doUpdateCalendars() error {
 	log.Print("[update] reloading calendars…")
-	wf.TextErrors = true
+	wf.Configure(aw.TextErrors(true))
 	cals, err := FetchCalendars(auth)
 	if err != nil {
 		return fmt.Errorf("couldn't load calendars: %v", err)
@@ -43,7 +43,7 @@ func doUpdateCalendars() error {
 // Fetch events for a specified date.
 func doUpdateEvents() error {
 	log.Printf("[update] fetching events for %s…", startTime.Format(timeFormat))
-	wf.TextErrors = true
+	wf.Configure(aw.TextErrors(true))
 	var (
 		events = []*Event{}
 		name   = fmt.Sprintf("events-%s.json", startTime.Format(timeFormat))

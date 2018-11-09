@@ -11,11 +11,13 @@ package main
 import (
 	"log"
 	"os/exec"
+
+	aw "github.com/deanishe/awgo"
 )
 
 // Open URL in specified app or in default.
 func doOpen() error {
-	wf.TextErrors = true
+	wf.Configure(aw.TextErrors(true))
 	args := []string{}
 	if openApp != "" {
 		log.Printf("[open] opening \"%s\" in \"%s\"…", calURL, openApp)

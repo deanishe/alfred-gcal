@@ -33,7 +33,7 @@ var invalidFormats = []string{
 func TestParseDate(t *testing.T) {
 	tm, err := parseDate("0")
 	if !tm.Equal(today) || err != nil {
-		t.Error("zero format failed. tm=%v, err=%v", tm, err)
+		t.Errorf("zero format failed. tm=%v, err=%v", tm, err)
 	}
 
 	for _, s := range validFormats {

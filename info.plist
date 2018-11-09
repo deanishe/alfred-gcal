@@ -421,6 +421,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
@@ -1075,6 +1085,14 @@ variables={allvars}
 			<integer>1</integer>
 		</dict>
 		<dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.hidealfred</string>
+			<key>uid</key>
+			<string>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
@@ -1386,6 +1404,13 @@ Configuration
 			<key>ypos</key>
 			<integer>360</integer>
 		</dict>
+		<key>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</key>
+		<dict>
+			<key>xpos</key>
+			<integer>780</integer>
+			<key>ypos</key>
+			<integer>1510</integer>
+		</dict>
 		<key>6CFB2AE8-7BAF-4DE6-B949-D0FF2DB50FD7</key>
 		<dict>
 			<key>xpos</key>
@@ -1523,7 +1548,7 @@ Configuration
 	<key>variables</key>
 	<dict>
 		<key>APPLE_MAPS</key>
-		<string>1</string>
+		<string>0</string>
 		<key>CALENDAR_APP</key>
 		<string></string>
 		<key>EVENT_CACHE_MINS</key>
@@ -1532,7 +1557,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.2</string>
+	<string>0.1.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

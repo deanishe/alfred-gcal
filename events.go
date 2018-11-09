@@ -75,7 +75,8 @@ func FetchCalendars(auth *Authenticator) ([]*Calendar, error) {
 
 // Event is a calendar event
 type Event struct {
-	ID            string    // Calendar ID
+	ID            string    // Event ID
+	IcalUID       string    // Cross-platform UID
 	Title         string    // Event title
 	Description   string    // Event summary/description
 	URL           string    // Event URL
@@ -147,6 +148,7 @@ func FetchEvents(auth *Authenticator, cal *Calendar, start time.Time) ([]*Event,
 
 		events = append(events, &Event{
 			ID:            e.Id,
+			IcalUID:       e.ICalUID,
 			Title:         e.Summary,
 			Description:   e.Description,
 			URL:           e.HtmlLink,

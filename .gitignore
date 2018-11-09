@@ -1,8 +1,8 @@
 /gcal
 /build
+/dist
 .autoenv*
-/secret_private.go
-
+/*.private
 
 # Created by https://www.gitignore.io/api/go,sublimetext,vim
 

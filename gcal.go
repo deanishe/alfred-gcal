@@ -35,7 +35,7 @@ var (
 	forumURL  = "https://www.alfredforum.com/topic/11016-google-calendar-view/"
 
 	usage = `
-gcal (events|calendars|toggle) [options] [<query>]
+gcal [<command>] [options] [<query>]
 
 Usage:
     gcal dates [--] [<format>]
@@ -233,9 +233,9 @@ func run() {
 	log.Printf("command=%v, calendarID=%v, query=%v, startTime=%v, endTime=%v, dateFormat=%v",
 		command, calendarID, query, startTime, endTime, dateFormat)
 
-	if !aw.IsRunning("server") {
+	if !wf.IsRunning("server") {
 		cmd := exec.Command("./gcal", "server")
-		if err := aw.RunInBackground("server", cmd); err != nil {
+		if err := wf.RunInBackground("server", cmd); err != nil {
 			wf.FatalError(err)
 		}
 	}

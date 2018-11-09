@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/util"
 )
 
@@ -101,7 +102,7 @@ func doToggle() error {
 // doClear removes cached calendars and events.
 func doClear() error {
 	log.Print("clearing cached calendars and events…")
-	wf.TextErrors = true
+	wf.Configure(aw.TextErrors(true))
 
 	paths := []string{filepath.Join(wf.CacheDir(), "calendars.json")}
 

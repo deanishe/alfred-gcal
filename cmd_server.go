@@ -33,6 +33,7 @@ func previewURL(t time.Time, eventID string) string {
 	v.Set("date", midnight(t).Format(timeFormat))
 	v.Set("event", eventID)
 	u.RawQuery = v.Encode()
+	log.Printf("[preview] url=%s", u.String())
 	return u.String()
 }
 

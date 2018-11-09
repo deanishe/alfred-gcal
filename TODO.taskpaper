@@ -1,0 +1,10 @@
+Bugs:
+	- Clear cache after selected calendars change
+	Currently, workflow shows events from inactive calendars and no events from active ones.
+
+Improvements:
+	- Change Keywords to Script Filters
+	Lets magic arguments work, too!
+
+New Features:
+	- Integration with Stuart's Google Maps workflow

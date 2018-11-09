@@ -11,8 +11,6 @@ package main
 import (
 	"errors"
 	"os/exec"
-
-	aw "github.com/deanishe/awgo"
 )
 
 var (
@@ -30,10 +28,10 @@ func allCalendars() ([]*Calendar, error) {
 	)
 
 	if wf.Cache.Expired(name, maxAgeCals) {
-		if !aw.IsRunning(jobName) {
+		if !wf.IsRunning(jobName) {
 			wf.Rerun(0.3)
 			cmd := exec.Command("./gcal", "update", "calendars")
-			if err := aw.RunInBackground(jobName, cmd); err != nil {
+			if err := wf.RunInBackground(jobName, cmd); err != nil {
 				return nil, err
 			}
 		}
@@ -95,7 +93,7 @@ func doListCalendars() error {
 		return err
 	}
 
-	if len(cals) == 0 && aw.IsRunning("update-calendars") {
+	if len(cals) == 0 && wf.IsRunning("update-calendars") {
 		wf.NewItem("Fetching List of Calendars…").
 			Subtitle("List will reload shortly").
 			Valid(false).

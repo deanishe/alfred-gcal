@@ -42,7 +42,7 @@ func doEvents() error {
 	}
 	log.Printf("%d active calendar(s)", len(cals))
 
-	if len(cals) == 0 && aw.IsRunning("update-calendars") {
+	if len(cals) == 0 && wf.IsRunning("update-calendars") {
 		wf.NewItem("Fetching List of Calendars…").
 			Subtitle("List will reload shortly").
 			Valid(false).
@@ -68,7 +68,7 @@ func doEvents() error {
 		log.Printf("%s", e.Title)
 	}
 
-	if len(all) == 0 && aw.IsRunning("update-events") {
+	if len(all) == 0 && wf.IsRunning("update-events") {
 		wf.NewItem("Fetching Events…").
 			Subtitle("Results will refresh shortly").
 			Icon(iconReload).
@@ -82,10 +82,15 @@ func doEvents() error {
 			Icon(aw.IconWorkflow)
 	}
 
-	for _, e := range events {
-		if schedule { // Show next day indicator
+	for i, e := range events {
+
+		if schedule { // Show day indicator
+
 			cur = midnight(e.Start)
-			if cur.After(last) {
+
+			// Show current date if this is the first item or the first of
+			// a new day.
+			if cur.After(last) || i == 0 {
 				last = cur
 				wf.NewItem(cur.Format(timeFormatLong)).
 					Arg(cur.Format(timeFormat)).
@@ -117,6 +122,7 @@ func doEvents() error {
 				Icon(icon).
 				Var("CALENDAR_APP", "") // Don't open Maps URLs in CALENDAR_APP
 		}
+		// log.Printf(`"%s" (%s)`, e.Title, e.IcalUID)
 	}
 
 	if !schedule {
@@ -145,9 +151,9 @@ func doEvents() error {
 		if err := gen.Save(); err != nil {
 			return err
 		}
-		if !aw.IsRunning("icons") {
+		if !wf.IsRunning("icons") {
 			cmd := exec.Command("./gcal", "update", "icons")
-			if err := aw.RunInBackground("icons", cmd); err != nil {
+			if err := wf.RunInBackground("icons", cmd); err != nil {
 				return err
 			}
 		}
@@ -169,9 +175,9 @@ func loadEvents(t time.Time, cal ...*Calendar) ([]*Event, error) {
 
 	if wf.Cache.Expired(name, maxAgeEvents) {
 		wf.Rerun(0.3)
-		if !aw.IsRunning(jobName) {
+		if !wf.IsRunning(jobName) {
 			cmd := exec.Command("./gcal", "update", "events", dateStr)
-			if err := aw.RunInBackground(jobName, cmd); err != nil {
+			if err := wf.RunInBackground(jobName, cmd); err != nil {
 				return nil, err
 			}
 		}

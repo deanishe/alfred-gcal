@@ -15,7 +15,7 @@ package main
 // https://console.developers.google.com/apis/dashboard
 //
 // Add the Google Calendar API and create credentials for a web app, with
-// http://localhost:6142 as the redirect URI.
+// http://localhost:61432 as the redirect URI.
 //
 // The workflow only requires read access.
 const secret = `
