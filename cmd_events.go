@@ -46,9 +46,11 @@ func doEvents() error {
 		wf.NewItem("Fetching List of Calendars…").
 			Subtitle("List will reload shortly").
 			Valid(false).
-			Icon(iconReload)
-		wf.Rerun(0.3)
+			Icon(reloadIcon())
+
+		wf.Rerun(0.1)
 		wf.SendFeedback()
+
 		return nil
 	}
 
@@ -71,7 +73,7 @@ func doEvents() error {
 	if len(all) == 0 && wf.IsRunning("update-events") {
 		wf.NewItem("Fetching Events…").
 			Subtitle("Results will refresh shortly").
-			Icon(iconReload).
+			Icon(reloadIcon()).
 			Valid(false)
 	}
 
@@ -147,7 +149,7 @@ func doEvents() error {
 	}
 
 	if gen.HasQueue() {
-		wf.Rerun(0.3)
+		wf.Rerun(0.1)
 		if err := gen.Save(); err != nil {
 			return err
 		}
@@ -174,7 +176,7 @@ func loadEvents(t time.Time, cal ...*Calendar) ([]*Event, error) {
 	)
 
 	if wf.Cache.Expired(name, maxAgeEvents) {
-		wf.Rerun(0.3)
+		wf.Rerun(0.1)
 		if !wf.IsRunning(jobName) {
 			cmd := exec.Command("./gcal", "update", "events", dateStr)
 			if err := wf.RunInBackground(jobName, cmd); err != nil {

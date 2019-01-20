@@ -97,7 +97,7 @@ func doListCalendars() error {
 		wf.NewItem("Fetching List of Calendars…").
 			Subtitle("List will reload shortly").
 			Valid(false).
-			Icon(iconReload)
+			Icon(reloadIcon())
 		wf.Rerun(0.3)
 		wf.SendFeedback()
 		return nil

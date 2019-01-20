@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deanishe/awgo"
+	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/util"
 )
 
@@ -64,6 +64,43 @@ var (
 		},
 	}
 )
+
+func reloadIcon() *aw.Icon {
+	var (
+		step    = 15
+		max     = (45 / step) - 1
+		current = wf.Config.GetInt("RELOAD_PROGRESS", 0)
+		next    = current + 1
+	)
+	if next > max {
+		next = 0
+	}
+
+	log.Printf("progress: current=%d, next=%d", current, next)
+
+	wf.Var("RELOAD_PROGRESS", fmt.Sprintf("%d", next))
+
+	if current == 0 {
+		return iconReload
+	}
+
+	return &aw.Icon{Value: fmt.Sprintf("icons/reload-%d.png", current*step)}
+
+	// switch current {
+	// case 1:
+	// 	return &aw.Icon{Value: "icons/reload-60.png"}
+	// case 2:
+	// 	return &aw.Icon{Value: "icons/reload-120.png"}
+	// case 3:
+	// 	return &aw.Icon{Value: "icons/reload-180.png"}
+	// case 4:
+	// 	return &aw.Icon{Value: "icons/reload-240.png"}
+	// case 5:
+	// 	return &aw.Icon{Value: "icons/reload-300.png"}
+	// default:
+	// 	return &aw.Icon{Value: "icons/reload.png"}
+	// }
+}
 
 // IconConfig is an icon from the server
 type IconConfig struct {
@@ -116,7 +153,7 @@ func (g *IconGenerator) loadQueue() error {
 	return json.Unmarshal(data, &g.Queue)
 }
 
-// Cachefile returns the path to Generators queue file.
+// Queuefile returns the path to Generators queue file.
 func (g *IconGenerator) Queuefile() string { return filepath.Join(g.Dir, "queue.json") }
 
 // Icon returns an *aw.Icon from the cache.

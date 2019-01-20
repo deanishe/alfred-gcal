@@ -17,10 +17,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/deanishe/awgo"
+	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/update"
 	"github.com/deanishe/awgo/util"
-	"github.com/docopt/docopt-go"
+	docopt "github.com/docopt/docopt-go"
 )
 
 const (
@@ -47,6 +47,7 @@ Usage:
     gcal clear
     gcal open [--app=<app>] <url>
     gcal server
+    gcal reload
     gcal -h
 
 Options:
@@ -96,6 +97,7 @@ func (c Cmd) String() string {
 		cmdUpdateEvents:    "updateEvents",
 		cmdUpdateIcons:     "updateIcons",
 		cmdUpdateWorkflow:  "updateWorkflow",
+		cmdReload:          "reload",
 	}
 	return commands[c]
 }
@@ -113,6 +115,7 @@ const (
 	cmdUpdateEvents
 	cmdUpdateIcons
 	cmdUpdateWorkflow
+	cmdReload
 )
 
 func init() {
@@ -125,15 +128,13 @@ func init() {
 
 	auth = NewAuthenticator(tokenFile, []byte(secret))
 
-	v := os.Getenv("APPLE_MAPS")
-	if v == "1" || v == "yes" || v == "true" {
-		useAppleMaps = true
-	}
+	useAppleMaps = wf.Config.GetBool("APPLE_MAPS")
 
-	n := envInt("SCHEDULE_DAYS", 3)
+	n := wf.Config.GetInt("SCHEDULE_DAYS", 3)
 	scheduleDuration = time.Hour * time.Duration(n*24)
-	n = envInt("EVENT_CACHE_MINS", 30)
+	n = wf.Config.GetInt("EVENT_CACHE_MINS", 30)
 	maxAgeEvents = time.Minute * time.Duration(n)
+
 }
 
 // Parse command-line flags
@@ -175,6 +176,9 @@ func parseFlags() error {
 	}
 	if args["toggle"] == true {
 		command = cmdToggle
+	}
+	if args["reload"] == true {
+		command = cmdReload
 	}
 	if args["update"] == true {
 		if args["calendars"] == true {
@@ -265,6 +269,8 @@ func run() {
 		err = doUpdateIcons()
 	case cmdUpdateWorkflow:
 		err = doUpdateWorkflow()
+	case cmdReload:
+		err = doReload()
 	}
 
 	if err != nil {
