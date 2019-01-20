@@ -56,10 +56,10 @@ Options:
     -d --date <date>   Date to show events for (format YYYY-MM-DD).
     -h --help          Show this message and exit.
 `
-	auth      *Authenticator
-	wf        *aw.Workflow
-	tokenFile string // Google credentials
+	auth *Authenticator
+	wf   *aw.Workflow
 
+	tokenFile     string // Google credentials
 	cacheDirIcons string // directory generated icons are stored in
 
 	useAppleMaps bool

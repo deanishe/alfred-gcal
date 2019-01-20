@@ -39,21 +39,25 @@ func previewURL(t time.Time, eventID string) string {
 
 // doStartServer starts the preview server.
 func doStartServer() error {
-	log.Printf("[preview] starting preview server…")
+	log.Printf("[preview] starting preview server on %s ...", previewServerURL)
 	var (
 		lastRequest = time.Now()
 		mu          = sync.Mutex{}
 		c           = make(chan struct{})
 		templates   = template.Must(template.ParseFiles(filepath.Join(wf.Dir(), "preview.html")))
+		mux         = http.NewServeMux()
+		srv         = &http.Server{
+			Addr:    previewServerURL,
+			Handler: mux,
+		}
 	)
-	srv := &http.Server{Addr: previewServerURL}
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			if err == http.ErrServerClosed {
 				log.Print("[preview] server stopped")
 			} else {
-				log.Printf("[preview/error] preview server failed: %v", err)
+				log.Printf("[preview] ERR: server failed: %v", err)
 			}
 		}
 		c <- struct{}{}
@@ -67,7 +71,7 @@ func doStartServer() error {
 			mu.Unlock()
 			log.Printf("[preview] %0.0fs since last request", d.Seconds())
 			if d >= quitAfter {
-				log.Print("[preview] stopping server…")
+				log.Print("[preview] stopping server ...")
 				if err := srv.Shutdown(context.Background()); err != nil {
 					log.Printf("[preview] server shutdown error: %v", err)
 				}
@@ -76,7 +80,7 @@ func doStartServer() error {
 		}
 	}()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		defer func() {
 			mu.Lock()
 			lastRequest = time.Now()
@@ -99,13 +103,13 @@ func doStartServer() error {
 		}
 		cals, err := activeCalendars()
 		if err != nil {
-			log.Printf("[preview/error] couldn't load active calendars: %v", err)
+			log.Printf("[preview] ERR: load active calendars: %v", err)
 			return
 		}
 		log.Printf("[preview] %d active calendar(s)", len(cals))
 		events, err := loadEvents(t, cals...)
 		if err != nil {
-			log.Printf("[preview/error] couldn't load events: %v", err)
+			log.Printf("[preview] ERR: load events: %v", err)
 			return
 		}
 		for _, e := range events {
@@ -118,13 +122,13 @@ func doStartServer() error {
 
 		if event == nil {
 			if err := templates.ExecuteTemplate(w, "fail", eventID); err != nil {
-				log.Printf("[preview/error] couldn't execute template \"fail\": %v", err)
+				log.Printf(`[preview] ERR: execute template "fail": %v`, err)
 			}
 			return
 		}
 
 		if err := templates.ExecuteTemplate(w, "event", event); err != nil {
-			log.Printf("[preview/error] couldn't execute template \"event\": %v", err)
+			log.Printf(`[preview] ERR: execute template "event": %v`, err)
 		}
 	})
 

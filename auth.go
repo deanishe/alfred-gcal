@@ -11,12 +11,14 @@ package main
 import (
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"sync"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -38,7 +40,11 @@ type Authenticator struct {
 	Secret    []byte
 	TokenFile string
 	state     string
-	client    *http.Client
+
+	client *http.Client
+	mu     sync.Mutex
+
+	Failed bool
 }
 
 // NewAuthenticator creates a new Authenticator
@@ -48,6 +54,14 @@ func NewAuthenticator(tokenFile string, secret []byte) *Authenticator {
 
 // GetClient returns an authenticated Google API client
 func (a *Authenticator) GetClient() (*http.Client, error) {
+
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.Failed {
+		return nil, errors.New("authentication failed")
+	}
+
 	if a.client != nil {
 		return a.client, nil
 	}
@@ -63,14 +77,15 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	ctx := context.Background()
 	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarReadonlyScope)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't load config: %v", err)
+		return nil, fmt.Errorf("load config: %v", err)
 	}
 
 	tok, err := a.tokenFromFile()
 	if err != nil {
 		tok, err = a.tokenFromWeb(cfg)
 		if err != nil {
-			return nil, fmt.Errorf("couldn't get token from web: %v", err)
+			a.Failed = true
+			return nil, fmt.Errorf("token from web: %v", err)
 		}
 		a.saveToken(tok)
 	}
@@ -83,7 +98,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 func (a *Authenticator) tokenFromFile() (*oauth2.Token, error) {
 	f, err := os.Open(a.TokenFile)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't open token file: %v", err)
+		return nil, fmt.Errorf("open token file: %v", err)
 	}
 	tok := &oauth2.Token{}
 	err = json.NewDecoder(f).Decode(tok)
@@ -95,7 +110,7 @@ func (a *Authenticator) tokenFromFile() (*oauth2.Token, error) {
 func (a *Authenticator) saveToken(tok *oauth2.Token) error {
 	f, err := os.OpenFile(a.TokenFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		return fmt.Errorf("couldn't open token file: %v", err)
+		return fmt.Errorf("open token file: %v", err)
 	}
 	defer f.Close()
 	return json.NewEncoder(f).Encode(tok)
@@ -104,17 +119,17 @@ func (a *Authenticator) saveToken(tok *oauth2.Token) error {
 // tokenFromWeb initiates web-based authentication and retrieves the oauth2 token
 func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) (*oauth2.Token, error) {
 	if err := a.openAuthURL(cfg); err != nil {
-		return nil, fmt.Errorf("couldn't open auth URL: %v", err)
+		return nil, fmt.Errorf("open auth URL: %v", err)
 	}
 
 	code, err := a.codeFromLocalServer()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get token from local server: %v", err)
+		return nil, fmt.Errorf("get token from local server: %v", err)
 	}
 
 	tok, err := cfg.Exchange(oauth2.NoContext, code)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't retrieve token from web: %v", err)
+		return nil, fmt.Errorf("token from web: %v", err)
 	}
 	return tok, nil
 }
@@ -124,7 +139,7 @@ func (a *Authenticator) openAuthURL(cfg *oauth2.Config) error {
 	authURL := cfg.AuthCodeURL(a.state, oauth2.AccessTypeOffline, oauth2.ApprovalForce)
 	cmd := exec.Command("/usr/bin/open", authURL)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("couldn't open auth URL: %v", err)
+		return fmt.Errorf("open auth URL: %v", err)
 	}
 	return nil
 }
@@ -132,27 +147,50 @@ func (a *Authenticator) openAuthURL(cfg *oauth2.Config) error {
 // codeFromLocalServer starts a local webserver to receive the oauth2 token
 // from Google
 func (a *Authenticator) codeFromLocalServer() (string, error) {
-	c := make(chan response)
-	srv := &http.Server{Addr: authServerURL}
+
+	var (
+		c   = make(chan response)
+		mux = http.NewServeMux()
+		srv = &http.Server{
+			Addr:    authServerURL,
+			Handler: mux,
+		}
+	)
 
 	go func() {
-		log.Printf("local webserver started")
+		log.Printf("[auth] starting local webserver on %s ...", authServerURL)
 		if err := srv.ListenAndServe(); err != nil {
 			c <- response{err: err}
 		}
 	}()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		vars := req.URL.Query()
 		code := vars.Get("code")
 		state := vars.Get("state")
-		log.Printf("oauth2 state=%v", state)
-		log.Printf("oauth2 code=%s", code)
+		errMsg := vars.Get("error")
+		log.Printf("[auth] oauth2 state=%v", state)
+		log.Printf("[auth] oauth2 code=%s", code)
+		log.Printf("[auth] oauth2 error=%s", errMsg)
 
 		// Verify state to prevent CSRF
 		if state != a.state {
 			c <- response{err: fmt.Errorf("state mismatch: expected=%s, got=%s", a.state, state)}
 			io.WriteString(w, "bad state\n")
+			return
+		}
+
+		// authentication failed
+		if errMsg != "" {
+			c <- response{err: errors.New(errMsg)}
+			io.WriteString(w, errMsg+"\n")
+			return
+		}
+
+		// user rejected
+		if code == "" {
+			c <- response{err: errors.New("user rejected access")}
+			io.WriteString(w, "access denied by user\n")
 			return
 		}
 
@@ -166,10 +204,11 @@ func (a *Authenticator) codeFromLocalServer() (string, error) {
 	if err := srv.Shutdown(context.Background()); err != nil {
 		log.Printf("shutdown error: %v", err)
 		if err != http.ErrServerClosed {
-			return "", fmt.Errorf("local webserver error: %v", err)
+			return "", fmt.Errorf("auth webserver: %v", err)
 		}
 	}
-	log.Printf("local webserver stopped")
+
+	log.Printf("[auth] local webserver stopped")
 
 	return r.code, r.err
 }

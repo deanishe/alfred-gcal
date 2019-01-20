@@ -42,7 +42,7 @@ func doUpdateCalendars() error {
 
 	cals, err := FetchCalendars(auth)
 	if err != nil {
-		log.Printf("[update/error] couldn't retrieve calendars: %v", err)
+		log.Printf("[update] ERR: retrieve calendars: %v", err)
 		return err
 	}
 
@@ -62,12 +62,12 @@ func doUpdateEvents() error {
 	log.Printf("[update] fetching events for %s ...", startTime.Format(timeFormat))
 
 	if err := clearOldFiles(); err != nil {
-		log.Printf("[update/error] problem deleting old cache files: %v", err)
+		log.Printf("[update] ERR: delete old cache files: %v", err)
 	}
 
 	cals, err := activeCalendars()
 	if err != nil {
-		log.Printf("[update/error] couldn't load active calendars: %v", err)
+		log.Printf("[update] ERR: load active calendars: %v", err)
 		return err
 	}
 	log.Printf("[update] %d active calendar(s)", len(cals))
@@ -88,7 +88,7 @@ func doUpdateEvents() error {
 
 			evs, err := FetchEvents(auth, c, startTime)
 			if err != nil {
-				log.Printf("[update/error] fetching events for calendar %q: %v", c.Title, err)
+				log.Printf("[update] ERR: fetching events for calendar %q: %v", c.Title, err)
 				return
 			}
 
@@ -162,7 +162,7 @@ func clearOldFiles() error {
 		if (strings.HasPrefix(fi.Name(), "events-") && ext == ".json") || ext == ".png" {
 
 			if err := os.Remove(path); err != nil {
-				log.Printf("[cache/error] couldn't delete %q: %v", path, err)
+				log.Printf("[cache] ERR: delete %q: %v", path, err)
 				return err
 			}
 		}
@@ -183,7 +183,7 @@ Outer:
 
 		infos, err := ioutil.ReadDir(dir)
 		if err != nil {
-			log.Printf("[cache/error] open dir %s: %v", dir, err)
+			log.Printf("[cache] ERR: open dir %s: %v", dir, err)
 			return err
 		}
 
@@ -198,7 +198,7 @@ Outer:
 		}
 
 		if err := os.RemoveAll(dir); err != nil {
-			log.Printf("[cache/error] delete dir %s: %v", dir, err)
+			log.Printf("[cache] ERR: delete dir %s: %v", dir, err)
 			return err
 		}
 		log.Printf("[cache] deleted dir: %s", util.PrettyPath(dir))
