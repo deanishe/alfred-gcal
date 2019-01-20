@@ -5,9 +5,10 @@ require (
 	github.com/bmatcuk/doublestar v1.1.1
 	github.com/deanishe/awgo v0.15.0
 	github.com/disintegration/imaging v1.5.0
-	github.com/docopt/docopt-go v0.0.0-20160216232012-784ddc588536
+	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/golang/protobuf v1.1.0 // indirect
 	github.com/magefile/mage v1.8.0
+	github.com/pkg/errors v0.8.1
 	golang.org/x/image v0.0.0-20190118043309-183bebdce1b2 // indirect
 	golang.org/x/net v0.0.0-20180629035331-4cb1c02c05b0
 	golang.org/x/oauth2 v0.0.0-20180620175406-ef147856a6dd

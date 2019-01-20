@@ -31,12 +31,12 @@ func doDates() error {
 		parsed bool // whether date was parsed from user input
 	)
 
-	if dateFormat == "" { // show default list
+	if opts.DateFormat == "" { // show default list
 		for i := -3; i < 4; i++ {
 			dates = append(dates, midnight(today.Add(oneDay*time.Duration(i))))
 		}
 	} else {
-		t, err := parseDate(dateFormat)
+		t, err := parseDate(opts.DateFormat)
 		if err != nil {
 			wf.Warn("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
 			return nil

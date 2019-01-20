@@ -19,13 +19,13 @@ import (
 func doOpen() error {
 	wf.Configure(aw.TextErrors(true))
 	args := []string{}
-	if openApp != "" {
-		log.Printf("[open] opening \"%s\" in \"%s\"…", calURL, openApp)
-		args = append(args, "-a", openApp)
+	if opts.App != "" {
+		log.Printf("[open] opening \"%s\" in \"%s\"…", opts.URL, opts.App)
+		args = append(args, "-a", opts.App)
 	} else {
-		log.Printf("[open] opening \"%s\" in default browser…", calURL)
+		log.Printf("[open] opening \"%s\" in default browser…", opts.URL)
 	}
-	args = append(args, calURL)
+	args = append(args, opts.URL)
 
 	cmd := exec.Command("/usr/bin/open", args...)
 	return cmd.Run()

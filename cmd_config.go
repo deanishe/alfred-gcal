@@ -69,8 +69,8 @@ func doConfig() error {
 		Valid(true).
 		Var("action", "clear")
 
-	if query != "" {
-		wf.Filter(query)
+	if opts.Query != "" {
+		wf.Filter(opts.Query)
 	}
 
 	wf.WarnEmpty("No Matches", "Try a different query")
@@ -84,16 +84,16 @@ func doToggle() error {
 	if err != nil && err != errNoActive {
 		return err
 	}
-	if IDs[calendarID] {
-		log.Printf("deactivating calendar %s ...", calendarID)
-		delete(IDs, calendarID)
+	if IDs[opts.CalendarID] {
+		log.Printf("deactivating calendar %s ...", opts.CalendarID)
+		delete(IDs, opts.CalendarID)
 	} else {
-		log.Printf("activating calendar %s ...", calendarID)
-		IDs[calendarID] = true
+		log.Printf("activating calendar %s ...", opts.CalendarID)
+		IDs[opts.CalendarID] = true
 	}
 
 	active := []string{}
-	for ID, _ := range IDs {
+	for ID := range IDs {
 		active = append(active, ID)
 	}
 	return wf.Cache.StoreJSON("active.json", active)

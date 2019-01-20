@@ -121,8 +121,8 @@ func doListCalendars() error {
 			Match(c.Title).
 			Valid(true)
 	}
-	if query != "" {
-		wf.Filter(query)
+	if opts.Query != "" {
+		wf.Filter(opts.Query)
 	}
 	wf.WarnEmpty("No Calendars", "Did you log in with the right account?")
 	wf.SendFeedback()

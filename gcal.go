@@ -21,6 +21,7 @@ import (
 	"github.com/deanishe/awgo/update"
 	"github.com/deanishe/awgo/util"
 	docopt "github.com/docopt/docopt-go"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -67,58 +68,44 @@ Options:
 	maxAgeEvents time.Duration
 
 	// CLI args
-	query            string
-	calendarID       string
-	command          Cmd
-	dateFormat       string
-	updateWhat       string
-	openApp          string
-	calURL           string
+	opts             *options
 	startTime        time.Time
 	scheduleDuration time.Duration
 	endTime          time.Time
 )
 
-// Cmd is a program sub-command
-type Cmd int
+// CLI flags
+type options struct {
+	// commands
+	Calendars bool
+	Clear     bool
+	Config    bool
+	Dates     bool
+	Events    bool
+	Open      bool
+	Reload    bool
+	Server    bool
+	Toggle    bool
+	Update    bool
 
-// String returns the name of the command
-func (c Cmd) String() string {
-	commands := map[Cmd]string{
-		cmdCalendars:       "calendars",
-		cmdClear:           "clear",
-		cmdConfig:          "config",
-		cmdDates:           "dates",
-		cmdEvents:          "events",
-		cmdOpen:            "open",
-		cmdServer:          "server",
-		cmdToggle:          "toggle",
-		cmdUpdateCalendars: "updateCalendars",
-		cmdUpdateEvents:    "updateEvents",
-		cmdUpdateIcons:     "updateIcons",
-		cmdUpdateWorkflow:  "updateWorkflow",
-		cmdReload:          "reload",
-	}
-	return commands[c]
+	// sub-commands
+	Icons    bool
+	Workflow bool
+
+	// flags
+	App        string
+	CalendarID string `docopt:"<calID>"`
+	Date       string `docopt:"<date>,--date"`
+	DateFormat string `docopt:"<format>"`
+	Query      string
+	URL        string `docopt:"<url>"`
+
+	// needed to make '--' work
+	EndOfOptions bool `docopt:"--"`
 }
 
-const (
-	cmdCalendars Cmd = iota
-	cmdClear
-	cmdConfig
-	cmdDates
-	cmdEvents
-	cmdOpen
-	cmdServer
-	cmdToggle
-	cmdUpdateCalendars
-	cmdUpdateEvents
-	cmdUpdateIcons
-	cmdUpdateWorkflow
-	cmdReload
-)
-
 func init() {
+
 	wf = aw.New(update.GitHub(repo), aw.HelpURL(helpURL))
 	wf.MagicActions.Register(&calendarMagic{})
 
@@ -139,91 +126,36 @@ func init() {
 
 // Parse command-line flags
 func parseFlags() error {
-	args, err := docopt.Parse(usage, wf.Args(), true, wf.Version(), false, true)
-	if err != nil {
-		return err
-	}
-	// log.Printf("args=%#v", args)
 
-	// Default start and end times
-	s := time.Now().In(time.Local).Format(timeFormat)
-	startTime, err = time.ParseInLocation(timeFormat, s, time.Local)
+	opts = &options{}
+
+	args, err := docopt.ParseArgs(usage, wf.Args(), wf.Version())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "docopt parse")
 	}
+
+	if err := args.Bind(opts); err != nil {
+		return errors.Wrap(err, "docopts bind")
+	}
+
+	// We don't need to be fussy about the default start and end times:
+	// The default startTime is only used in schedule mode, and it (and endTime)
+	// will be set to midnight if user specifies a date.
+	startTime = time.Now().Local()
 	schedule = true
 
-	if args["calendars"] == true {
-		command = cmdCalendars
-	}
-	if args["clear"] == true {
-		command = cmdClear
-	}
-	if args["config"] == true {
-		command = cmdConfig
-	}
-	if args["dates"] == true {
-		command = cmdDates
-	}
-	if args["events"] == true {
-		command = cmdEvents
-	}
-	if args["open"] == true {
-		command = cmdOpen
-	}
-	if args["server"] == true {
-		command = cmdServer
-	}
-	if args["toggle"] == true {
-		command = cmdToggle
-	}
-	if args["reload"] == true {
-		command = cmdReload
-	}
-	if args["update"] == true {
-		if args["calendars"] == true {
-			command = cmdUpdateCalendars
-		}
-		if args["events"] == true {
-			command = cmdUpdateEvents
-		}
-		if args["icons"] == true {
-			command = cmdUpdateIcons
-		}
-		if args["workflow"] == true {
-			command = cmdUpdateWorkflow
-		}
-	}
-
-	if s, ok := args["<date>"].(string); ok {
-		startTime, err = time.ParseInLocation(timeFormat, s, time.Local)
-		if err != nil {
-			return err
-		}
-	}
-	if s, ok := args["<query>"].(string); ok {
-		query = s
-	}
-	if s, ok := args["--app"].(string); ok {
-		openApp = s
-	}
-	if s, ok := args["<url>"].(string); ok {
-		calURL = s
-	}
-	if s, ok := args["<calID>"].(string); ok {
-		calendarID = s
-	}
-	if s, ok := args["<format>"].(string); ok {
-		dateFormat = s
-	}
-	if s, ok := args["--date"].(string); ok {
-		startTime, err = time.ParseInLocation(timeFormat, s, time.Local)
+	if opts.Date != "" {
+		startTime, err = time.ParseInLocation(timeFormat, opts.Date, time.Local)
 		if err != nil {
 			return err
 		}
 		schedule = false
 	}
+
 	endTime = startTime.Add(time.Hour * 24)
+
+	log.Printf("query=%q, startTime=%v, endTime=%v", opts.Query, startTime, endTime)
+
 	return nil
 }
 
@@ -234,9 +166,6 @@ func run() {
 		wf.FatalError(err)
 	}
 
-	log.Printf("command=%v, calendarID=%v, query=%v, startTime=%v, endTime=%v, dateFormat=%v",
-		command, calendarID, query, startTime, endTime, dateFormat)
-
 	if !wf.IsRunning("server") {
 		cmd := exec.Command("./gcal", "server")
 		if err := wf.RunInBackground("server", cmd); err != nil {
@@ -244,32 +173,36 @@ func run() {
 		}
 	}
 
-	switch command {
-	case cmdCalendars:
+	switch {
+	case opts.Update:
+		switch {
+		case opts.Calendars:
+			err = doUpdateCalendars()
+		case opts.Events:
+			err = doUpdateEvents()
+		case opts.Icons:
+			err = doUpdateIcons()
+		case opts.Workflow:
+			err = doUpdateWorkflow()
+		}
+		break
+	case opts.Calendars:
 		err = doListCalendars()
-	case cmdClear:
+	case opts.Clear:
 		err = doClear()
-	case cmdConfig:
+	case opts.Config:
 		err = doConfig()
-	case cmdDates:
+	case opts.Dates:
 		err = doDates()
-	case cmdEvents:
+	case opts.Events:
 		err = doEvents()
-	case cmdOpen:
+	case opts.Open:
 		err = doOpen()
-	case cmdServer:
+	case opts.Server:
 		err = doStartServer()
-	case cmdToggle:
+	case opts.Toggle:
 		err = doToggle()
-	case cmdUpdateCalendars:
-		err = doUpdateCalendars()
-	case cmdUpdateEvents:
-		err = doUpdateEvents()
-	case cmdUpdateIcons:
-		err = doUpdateIcons()
-	case cmdUpdateWorkflow:
-		err = doUpdateWorkflow()
-	case cmdReload:
+	case opts.Reload:
 		err = doReload()
 	}
 

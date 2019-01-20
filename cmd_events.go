@@ -79,7 +79,7 @@ func doEvents() error {
 
 	log.Printf("%d event(s) for %s", len(events), startTime.Format(timeFormat))
 
-	if len(events) == 0 && query == "" {
+	if len(events) == 0 && opts.Query == "" {
 		wf.NewItem(fmt.Sprintf("No Events on %s", startTime.Format(timeFormatLong))).
 			Icon(aw.IconWorkflow)
 	}
@@ -144,8 +144,8 @@ func doEvents() error {
 			Var("action", "date")
 	}
 
-	if query != "" {
-		wf.Filter(query)
+	if opts.Query != "" {
+		wf.Filter(opts.Query)
 	}
 
 	if gen.HasQueue() {
