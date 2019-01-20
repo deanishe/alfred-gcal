@@ -11,35 +11,38 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"time"
 
 	aw "github.com/deanishe/awgo"
+	"github.com/pkg/errors"
 )
 
 // doEvents shows a list of events in Alfred.
 func doEvents() error {
 	var (
-		last = today
-		cur  = today
+		cals []*Calendar
+		err  error
 	)
-	gen, err := NewIconGenerator(cacheDirIcons, aw.IconWorkflow)
-	if err != nil {
-		return err
-	}
 
-	cals, err := activeCalendars()
-	if err != nil {
+	if cals, err = activeCalendars(); err != nil {
+
 		if err == errNoActive {
+
 			wf.NewItem("No Active Calendars").
 				Subtitle("Action this item to choose calendars").
 				Autocomplete("workflow:calendars").
 				Icon(aw.IconWarning)
+
 			wf.SendFeedback()
+
 			return nil
 		}
+
 		return err
 	}
+
 	log.Printf("%d active calendar(s)", len(cals))
 
 	if len(cals) == 0 && wf.IsRunning("update-calendars") {
@@ -54,12 +57,15 @@ func doEvents() error {
 		return nil
 	}
 
-	all, err := loadEvents(startTime, cals...)
-	if err != nil {
-		return err
-	}
+	var (
+		all    []*Event
+		events []*Event
+		parsed time.Time
+	)
 
-	events := []*Event{}
+	if all, err = loadEvents(startTime, cals...); err != nil {
+		return errors.Wrap(err, "load events")
+	}
 
 	// Filter out events after cutoff
 	for _, e := range all {
@@ -75,34 +81,45 @@ func doEvents() error {
 			Subtitle("Results will refresh shortly").
 			Icon(reloadIcon()).
 			Valid(false)
+
+		wf.Rerun(0.1)
 	}
 
 	log.Printf("%d event(s) for %s", len(events), startTime.Format(timeFormat))
 
-	if len(events) == 0 && opts.Query == "" {
-		wf.NewItem(fmt.Sprintf("No Events on %s", startTime.Format(timeFormatLong))).
-			Icon(aw.IconWorkflow)
+	if t, ok := parseDate(opts.Query); ok {
+
+		parsed = t
+
 	}
 
-	for i, e := range events {
+	if len(events) == 0 && opts.Query == "" {
+		wf.NewItem(fmt.Sprintf("No Events on %s", startTime.Format(timeFormatLong))).
+			Icon(ColouredIcon(iconCalendar, yellow))
+	}
 
-		if schedule { // Show day indicator
+	var day time.Time
 
-			cur = midnight(e.Start)
+	for _, e := range events {
 
-			// Show current date if this is the first item or the first of
-			// a new day.
-			if cur.After(last) || i == 0 {
-				last = cur
-				wf.NewItem(cur.Format(timeFormatLong)).
-					Arg(cur.Format(timeFormat)).
-					Valid(true).
-					Icon(iconDay)
-			}
+		// Show day indicator if this is the first event of a given day
+		if schedule && opts.Query == "" && midnight(e.Start).After(day) {
+
+			day = midnight(e.Start)
+
+			wf.NewItem(day.Format(timeFormatLong)).
+				Arg(day.Format(timeFormat)).
+				Valid(true).
+				Icon(iconDay)
 		}
 
-		icon := gen.Icon(eventIconFont, eventIconName, e.Colour)
-		sub := fmt.Sprintf("%s – %s / %s", e.Start.Local().Format("15:04"), e.End.Local().Format("15:04"), e.CalendarTitle)
+		// icon := gen.Icon(eventIconFont, eventIconName, e.Colour)
+
+		icon := ColouredIcon(iconCalendar, e.Colour)
+
+		sub := fmt.Sprintf("%s – %s / %s",
+			e.Start.Local().Format("15:04"), e.End.Local().Format("15:04"), e.CalendarTitle)
+
 		it := wf.NewItem(e.Title).
 			Subtitle(sub).
 			Icon(icon).
@@ -116,7 +133,8 @@ func doEvents() error {
 			if useAppleMaps {
 				app = "Apple Maps"
 			}
-			icon := gen.Icon(mapIconFont, mapIconName, e.Colour)
+
+			icon := ColouredIcon(iconMap, e.Colour)
 			it.NewModifier("cmd").
 				Subtitle("Open in "+app).
 				Arg(mapURL(e.Location)).
@@ -124,7 +142,6 @@ func doEvents() error {
 				Icon(icon).
 				Var("CALENDAR_APP", "") // Don't open Maps URLs in CALENDAR_APP
 		}
-		// log.Printf(`"%s" (%s)`, e.Title, e.IcalUID)
 	}
 
 	if !schedule {
@@ -148,17 +165,16 @@ func doEvents() error {
 		wf.Filter(opts.Query)
 	}
 
-	if gen.HasQueue() {
-		wf.Rerun(0.1)
-		if err := gen.Save(); err != nil {
-			return err
-		}
-		if !wf.IsRunning("icons") {
-			cmd := exec.Command("./gcal", "update", "icons")
-			if err := wf.RunInBackground("icons", cmd); err != nil {
-				return err
-			}
-		}
+	if !parsed.IsZero() {
+
+		s := parsed.Format(timeFormat)
+
+		wf.NewItem(parsed.Format(timeFormatLong)).
+			Subtitle(relativeDays(parsed, false)).
+			Arg(s).
+			Autocomplete(s).
+			Valid(true).
+			Icon(iconDefault)
 	}
 
 	wf.WarnEmpty("No Matching Events", "Try a different query?")
@@ -178,7 +194,7 @@ func loadEvents(t time.Time, cal ...*Calendar) ([]*Event, error) {
 	if wf.Cache.Expired(name, maxAgeEvents) {
 		wf.Rerun(0.1)
 		if !wf.IsRunning(jobName) {
-			cmd := exec.Command("./gcal", "update", "events", dateStr)
+			cmd := exec.Command(os.Args[0], "update", "events", dateStr)
 			if err := wf.RunInBackground(jobName, cmd); err != nil {
 				return nil, err
 			}

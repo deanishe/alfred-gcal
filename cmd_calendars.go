@@ -10,6 +10,7 @@ package main
 
 import (
 	"errors"
+	"os"
 	"os/exec"
 )
 
@@ -28,9 +29,12 @@ func allCalendars() ([]*Calendar, error) {
 	)
 
 	if wf.Cache.Expired(name, maxAgeCals) {
+
 		if !wf.IsRunning(jobName) {
-			wf.Rerun(0.3)
-			cmd := exec.Command("./gcal", "update", "calendars")
+
+			wf.Rerun(0.1)
+
+			cmd := exec.Command(os.Args[0], "update", "calendars")
 			if err := wf.RunInBackground(jobName, cmd); err != nil {
 				return nil, err
 			}

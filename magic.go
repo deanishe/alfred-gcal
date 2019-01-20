@@ -8,18 +8,11 @@
 
 package main
 
-import (
-	"fmt"
-	"os/exec"
-)
+import aw "github.com/deanishe/awgo"
 
 type calendarMagic struct{}
 
 func (cm *calendarMagic) Keyword() string     { return "calendars" }
 func (cm *calendarMagic) Description() string { return "Activate/deactivate calendars" }
 func (cm *calendarMagic) RunText() string     { return "Opening calendar list…" }
-func (cm *calendarMagic) Run() error {
-	script := fmt.Sprintf(`tell application "Alfred 3" to run trigger "calendars" in workflow "%s"`, wf.BundleID())
-	cmd := exec.Command("/usr/bin/osascript", "-e", script)
-	return cmd.Run()
-}
+func (cm *calendarMagic) Run() error          { return aw.NewAlfred().RunTrigger("calendars", "") }

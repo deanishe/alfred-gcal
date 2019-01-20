@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,45 +27,83 @@ var (
 
 // doDates shows a list of dates in Alfred.
 func doDates() error {
-	var (
-		dates  = []time.Time{}
-		parsed bool // whether date was parsed from user input
-	)
 
-	if opts.DateFormat == "" { // show default list
-		for i := -3; i < 4; i++ {
-			dates = append(dates, midnight(today.Add(oneDay*time.Duration(i))))
-		}
-	} else {
-		t, err := parseDate(opts.DateFormat)
-		if err != nil {
-			wf.Warn("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
-			return nil
-		}
+	var parsed bool
+
+	if t, ok := parseDate(opts.DateFormat); ok {
+
 		parsed = true
-		dates = append(dates, t)
+
+		s := t.Format(timeFormat)
+
+		wf.NewItem(t.Format(timeFormatLong)).
+			Subtitle(relativeDays(t, false)).
+			Arg(s).
+			Autocomplete(s).
+			Valid(true).
+			Icon(iconDefault)
+
+	} else {
+		for i := -3; i < 4; i++ {
+
+			var (
+				t    = midnight(today.Add(oneDay * time.Duration(i)))
+				s    = t.Format(timeFormat)
+				icon = iconDefault
+			)
+
+			if t.Equal(today) {
+				icon = iconCalToday
+			}
+
+			wf.NewItem(relativeDays(t, true)).
+				Subtitle(s).
+				Arg(s).
+				Autocomplete(s).
+				Valid(true).
+				Icon(icon)
+
+		}
 	}
 
-	for _, t := range dates {
-		var sub, title string
-		dateStr := t.Format(timeFormat)
-		longDate := t.Format(timeFormatLong)
-		title = relativeDays(t, !parsed)
-		sub = dateStr
-		if parsed {
-			title, sub = longDate, title
-		}
-		icon := iconDefault
-		if t.Equal(today) {
-			icon = iconCalToday
-		}
-		wf.NewItem(title).
-			Subtitle(sub).
-			Arg(dateStr).
-			Autocomplete(dateStr).
-			Valid(true).
-			Icon(icon)
+	if !parsed && opts.DateFormat != "" {
+		_ = wf.Filter(opts.DateFormat)
 	}
+
+	wf.WarnEmpty("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
+	/*
+		if opts.DateFormat == "" { // show default list
+		} else {
+			t, err := parseDate(opts.DateFormat)
+			if err != nil {
+				wf.Warn("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
+				return nil
+			}
+			parsed = true
+			dates = append(dates, t)
+		}
+
+		for _, t := range dates {
+			var sub, title string
+			dateStr := t.Format(timeFormat)
+			longDate := t.Format(timeFormatLong)
+			title = relativeDays(t, !parsed)
+			sub = dateStr
+			if parsed {
+				title, sub = longDate, title
+			}
+			icon := iconDefault
+			if t.Equal(today) {
+				icon = iconCalToday
+			}
+			wf.NewItem(title).
+				Subtitle(sub).
+				Arg(dateStr).
+				Autocomplete(dateStr).
+				Valid(true).
+				Icon(icon)
+		}
+	*/
 
 	wf.SendFeedback()
 	return nil
@@ -72,7 +111,7 @@ func doDates() error {
 
 // Return midnight in local timezone for given Time.
 func midnight(t time.Time) time.Time {
-	s := t.In(time.Local).Format(timeFormat)
+	s := t.Local().Format(timeFormat)
 	m, err := time.ParseInLocation(timeFormat, s, time.Local)
 	if err != nil {
 		panic(err)
@@ -80,12 +119,19 @@ func midnight(t time.Time) time.Time {
 	return m
 }
 
-func parseDate(s string) (time.Time, error) {
+// parse string into Time. Boolean is true if parsing was successful.
+func parseDate(s string) (time.Time, bool) {
+
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return time.Time{}, false
+	}
+
 	if t, err := time.ParseInLocation(timeFormat, s, time.Local); err == nil {
-		return t, nil
+		return t, true
 	}
 	if t, err := time.ParseInLocation("20060102", s, time.Local); err == nil {
-		return t, nil
+		return t, true
 	}
 
 	// Parse custom format [+|-]NN[d|w]
@@ -97,7 +143,7 @@ func parseDate(s string) (time.Time, error) {
 	)
 	m := parseRegex.FindStringSubmatch(s)
 	if m == nil {
-		return time.Time{}, fmt.Errorf("invalid format: %s", s)
+		return time.Time{}, false
 	}
 
 	// Sign
@@ -107,11 +153,11 @@ func parseDate(s string) (time.Time, error) {
 	// Count
 	n, err := strconv.Atoi(m[2])
 	if err != nil {
-		return time.Time{}, fmt.Errorf("invalid number: %s", m[2])
+		return time.Time{}, false
 	}
 
 	if n == 0 {
-		return today, nil
+		return today, true
 	}
 
 	// Optional unit
@@ -132,7 +178,7 @@ func parseDate(s string) (time.Time, error) {
 		t = today.Add(-delta)
 	}
 
-	return midnight(t), nil
+	return midnight(t), true
 }
 
 // Return Time as "x day(s) ago" or "in x day(s)"

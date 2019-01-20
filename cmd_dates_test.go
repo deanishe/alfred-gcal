@@ -31,28 +31,28 @@ var invalidFormats = []string{
 }
 
 func TestParseDate(t *testing.T) {
-	tm, err := parseDate("0")
-	if !tm.Equal(today) || err != nil {
-		t.Errorf("zero format failed. tm=%v, err=%v", tm, err)
+	tm, ok := parseDate("0")
+	if !tm.Equal(today) || !ok {
+		t.Errorf("zero format failed. tm=%v", tm)
 	}
 
 	for _, s := range validFormats {
-		tm, err := parseDate(s)
-		if err != nil {
-			t.Errorf("error parsing valid format \"%s\": %s", s, err)
+		tm, ok := parseDate(s)
+		if !ok {
+			t.Errorf("error parsing valid format %q", s)
 		}
 		if tm.IsZero() {
-			t.Errorf("zero time for valid format \"%s\"", s)
+			t.Errorf("zero time for valid format %q", s)
 		}
 	}
 
 	for _, s := range invalidFormats {
-		tm, err := parseDate(s)
-		if err == nil {
-			t.Errorf("no error parsing invalid format \"%s\"", s)
+		tm, ok := parseDate(s)
+		if ok {
+			t.Errorf("no error parsing invalid format %q", s)
 		}
 		if !tm.IsZero() {
-			t.Errorf("non-zero time for invalid format \"%s\": %v", s, tm)
+			t.Errorf("non-zero time for invalid format %q: %v", s, tm)
 		}
 	}
 }

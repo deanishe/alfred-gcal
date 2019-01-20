@@ -9,6 +9,7 @@ require (
 	github.com/golang/protobuf v1.1.0 // indirect
 	github.com/magefile/mage v1.8.0
 	github.com/pkg/errors v0.8.1
+	golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045 // indirect
 	golang.org/x/image v0.0.0-20190118043309-183bebdce1b2 // indirect
 	golang.org/x/net v0.0.0-20180629035331-4cb1c02c05b0
 	golang.org/x/oauth2 v0.0.0-20180620175406-ef147856a6dd

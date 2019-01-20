@@ -20,37 +20,51 @@ import (
 	"time"
 
 	aw "github.com/deanishe/awgo"
+	"github.com/deanishe/awgo/util"
 )
 
 // Check if a new version of the workflow is available.
 func doUpdateWorkflow() error {
-	log.Print("[update] checking for new version of workflow…")
+
 	wf.Configure(aw.TextErrors(true))
+
+	log.Print("[update] checking for new version of workflow…")
+
 	return wf.CheckForUpdate()
 }
 
 // Fetch and cache list of calendars.
 func doUpdateCalendars() error {
-	log.Print("[update] reloading calendars…")
+
 	wf.Configure(aw.TextErrors(true))
+
+	log.Print("[update] reloading calendars…")
+
 	cals, err := FetchCalendars(auth)
 	if err != nil {
-		return fmt.Errorf("couldn't load calendars: %v", err)
+		log.Printf("[update/error] couldn't retrieve calendars: %v", err)
+		return err
 	}
+
 	return wf.Cache.StoreJSON("calendars.json", cals)
 }
 
 // Fetch events for a specified date.
 func doUpdateEvents() error {
-	log.Printf("[update] fetching events for %s…", startTime.Format(timeFormat))
+
 	wf.Configure(aw.TextErrors(true))
+
 	var (
 		events = []*Event{}
 		name   = fmt.Sprintf("events-%s.json", startTime.Format(timeFormat))
 	)
-	if err := clearOldEvents(); err != nil {
+
+	log.Printf("[update] fetching events for %s ...", startTime.Format(timeFormat))
+
+	if err := clearOldFiles(); err != nil {
 		log.Printf("[update/error] problem deleting old cache files: %v", err)
 	}
+
 	cals, err := activeCalendars()
 	if err != nil {
 		log.Printf("[update/error] couldn't load active calendars: %v", err)
@@ -67,15 +81,19 @@ func doUpdateEvents() error {
 	wg.Add(len(cals))
 
 	for _, c := range cals {
+
 		go func(c *Calendar) {
+
 			defer wg.Done()
+
 			evs, err := FetchEvents(auth, c, startTime)
 			if err != nil {
-				log.Printf("[update/error] fetching events for calendar \"%s\": %v", c.Title, err)
+				log.Printf("[update/error] fetching events for calendar %q: %v", c.Title, err)
 				return
 			}
 
-			log.Printf("[update] %d event(s) in calendar \"%s\"", len(evs), c.Title)
+			log.Printf("[update] %d event(s) in calendar %q", len(evs), c.Title)
+
 			for _, e := range evs {
 				ch <- e
 				// events = append(events, e)
@@ -89,9 +107,11 @@ func doUpdateEvents() error {
 		close(ch)
 	}()
 
+	colours := map[string]bool{}
 	for e := range ch {
 		log.Printf("[update] %s", e)
 		events = append(events, e)
+		colours[e.Colour] = true
 	}
 
 	sort.Sort(EventsByStart(events))
@@ -99,35 +119,90 @@ func doUpdateEvents() error {
 	if err := wf.Cache.StoreJSON(name, events); err != nil {
 		return err
 	}
+
+	// Ensure icons exist in all colours
+	for clr := range colours {
+		_ = ColouredIcon(iconCalendar, clr)
+		_ = ColouredIcon(iconMap, clr)
+	}
+
 	return nil
 }
 
-// doUpdateIcons fetches queued icons.
-func doUpdateIcons() error {
-	gen, err := NewIconGenerator(cacheDirIcons, aw.IconWorkflow)
-	if err != nil {
-		return err
-	}
-	return gen.Download()
-}
+// Remove events-* files and icons older than two weeks.
+func clearOldFiles() error {
 
-// Remove events-* files that haven't been updated in a week.
-func clearOldEvents() error {
-	files, err := ioutil.ReadDir(wf.CacheDir())
-	if err != nil {
-		return err
-	}
-	for _, fi := range files {
-		name := fi.Name()
-		cutoff := time.Now().AddDate(0, 0, -7)
-		if strings.HasPrefix(name, "events-") && strings.HasSuffix(name, ".json") {
-			if fi.ModTime().Before(cutoff) {
-				p := filepath.Join(wf.CacheDir(), name)
-				if err := os.Remove(p); err != nil {
-					log.Printf("[ERROR] couldn't delete file \"%s\": %v", p, err)
-				}
+	var (
+		cutoff = time.Now().AddDate(0, 0, -14)
+		dirs   = []string{}
+		err    error
+	)
+
+	err = filepath.Walk(wf.CacheDir(), func(path string, fi os.FileInfo, err error) error {
+
+		if err != nil {
+			return err
+		}
+
+		if fi.Name() == "_aw" && fi.IsDir() {
+			return filepath.SkipDir
+		}
+
+		if fi.IsDir() {
+			dirs = append(dirs, path)
+			return nil
+		}
+
+		if fi.ModTime().After(cutoff) {
+			return nil
+		}
+
+		ext := filepath.Ext(path)
+
+		if (strings.HasPrefix(fi.Name(), "events-") && ext == ".json") || ext == ".png" {
+
+			if err := os.Remove(path); err != nil {
+				log.Printf("[cache/error] couldn't delete %q: %v", path, err)
+				return err
 			}
 		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
 	}
+
+	// Remove empty directories. Sort in reverse order so sub-directories are
+	// before their parents.
+	sort.Sort(sort.Reverse(sort.StringSlice(dirs)))
+
+Outer:
+	for _, dir := range dirs {
+
+		infos, err := ioutil.ReadDir(dir)
+		if err != nil {
+			log.Printf("[cache/error] open dir %s: %v", dir, err)
+			return err
+		}
+
+		// ignore dotfiles
+		for _, fi := range infos {
+			if strings.HasPrefix(fi.Name(), ".") {
+				continue
+			}
+			// rel, _ := filepath.Rel(wf.CacheDir(), dir)
+			// log.Printf("[cache] %s -- %d item(s)", rel, len(infos))
+			continue Outer
+		}
+
+		if err := os.RemoveAll(dir); err != nil {
+			log.Printf("[cache/error] delete dir %s: %v", dir, err)
+			return err
+		}
+		log.Printf("[cache] deleted dir: %s", util.PrettyPath(dir))
+	}
+
 	return nil
 }

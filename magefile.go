@@ -7,23 +7,15 @@ package main
 
 import (
 	"archive/zip"
-	"bufio"
 	"fmt"
-	"image"
-	"image/png"
 	"io"
 	"io/ioutil"
-	"net"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
-	"time"
 	"unicode"
 
 	"github.com/bmatcuk/doublestar"
-	"github.com/disintegration/imaging"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"golang.org/x/text/transform"
@@ -285,17 +277,52 @@ func Link() error {
 	return nil
 }
 
+// Icons generate icons
+func Icons() error {
+
+	var (
+		green = "03ae03"
+		blue  = "5484f3"
+		// red    = "b00000"
+		// yellow = "f8ac30"
+	)
+
+	copies := []struct {
+		src, dest, colour string
+	}{
+		{"calendar.png", "icon.png", blue},
+		{"calendar.png", "calendar-today.png", green},
+		{"docs.png", "help.png", green},
+	}
+
+	for i, cfg := range copies {
+
+		src := filepath.Join("icons", cfg.src)
+		dest := filepath.Join("icons", cfg.dest)
+
+		if exists(dest) {
+			fmt.Printf("[%d/%d] skipped existing: %s\n", i+1, len(copies), dest)
+			continue
+		}
+
+		if err := copyImage(src, dest, cfg.colour); err != nil {
+			return err
+		}
+	}
+
+	return rotateIcon("./icons/loading.png", []int{15, 30})
+
+	return nil
+}
+
+/*
+
 type iconCfg struct {
 	name, colour, font, icon string
 }
 
-// IconsReplace download all icons, replacing any existing ones
-func IconsReplace() {
-	mg.SerialDeps(cleanIcons, Icons)
-}
-
 // Icons download workflow icons
-func Icons() error {
+func oldIcons() error {
 
 	var (
 		api   = "http://icons.deanishe.net/icon"
@@ -357,7 +384,7 @@ func Icons() error {
 	// return rotateIcon("./icons/reload.png", []float64{22.5})
 }
 
-var client = http.Client{
+var client = &http.Client{
 	Transport: &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout:   60 * time.Second,
@@ -396,6 +423,7 @@ func download(URL, path string) error {
 
 	return nil
 }
+*/
 
 // Deps ensure dependencies
 func Deps() error {
@@ -455,56 +483,7 @@ func cleanMage() error {
 	return sh.Run("mage", "-clean")
 }
 
-func cleanIcons() error {
-	return cleanDir("./icons", "*.txt")
-}
-
-func rotateIcon(path string, angles []int) error {
-
-	var (
-		dir  = filepath.Dir(path)
-		ext  = filepath.Ext(path)
-		base = filepath.Base(path)
-		name = base[0 : len(base)-len(ext)]
-		src  image.Image
-		f    *os.File
-		err  error
-	)
-
-	if f, err = os.Open(path); err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if src, _, err = image.Decode(f); err != nil {
-		return err
-	}
-
-	for i, n := range angles {
-
-		p := filepath.Join(dir, fmt.Sprintf("%s-%d%s", name, n, ext))
-
-		if exists(p) {
-			fmt.Printf("[%d/%d] skipped existing: %s\n", i+1, len(angles), p)
-			continue
-		}
-
-		// dst := image.NewRGBA(src.Bounds())
-		// draw.Draw(dst, dst.Bounds(), src, image.ZP, draw.Src)
-		dst := imaging.Rotate(src, 360-float64(n), image.Transparent)
-		dst = imaging.CropCenter(dst, src.Bounds().Dx(), src.Bounds().Dy())
-
-		if f, err = os.Create(p); err != nil {
-			return err
-		}
-		defer f.Close()
-
-		if err = png.Encode(f, dst); err != nil {
-			return err
-		}
-
-		fmt.Printf("wrote %s\n", p)
-	}
-
-	return nil
+// CleanIcons delete all generated icons from ./icons
+func CleanIcons() error {
+	return cleanDir("./icons")
 }

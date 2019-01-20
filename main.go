@@ -43,7 +43,7 @@ Usage:
     gcal events [--date=<date>] [<query>]
     gcal calendars [<query>]
     gcal toggle <calID>
-    gcal update (workflow|calendars|events|icons) [<date>]
+    gcal update (workflow|calendars|events) [<date>]
     gcal config [<query>]
     gcal clear
     gcal open [--app=<app>] <url>
@@ -56,12 +56,14 @@ Options:
     -d --date <date>   Date to show events for (format YYYY-MM-DD).
     -h --help          Show this message and exit.
 `
-	auth          *Authenticator
-	wf            *aw.Workflow
-	tokenFile     string
-	cacheDirIcons string
-	useAppleMaps  bool
-	schedule      bool
+	auth      *Authenticator
+	wf        *aw.Workflow
+	tokenFile string // Google credentials
+
+	cacheDirIcons string // directory generated icons are stored in
+
+	useAppleMaps bool
+	schedule     bool // show in schedule mode
 
 	// Cache ages
 	maxAgeCals   = time.Hour * 3
@@ -72,6 +74,12 @@ Options:
 	startTime        time.Time
 	scheduleDuration time.Duration
 	endTime          time.Time
+
+	// Workflow icon colours
+	green  = "03ae03"
+	blue   = "5484f3"
+	red    = "b00000"
+	yellow = "f8ac30"
 )
 
 // CLI flags
@@ -89,7 +97,6 @@ type options struct {
 	Update    bool
 
 	// sub-commands
-	Icons    bool
 	Workflow bool
 
 	// flags
@@ -167,7 +174,7 @@ func run() {
 	}
 
 	if !wf.IsRunning("server") {
-		cmd := exec.Command("./gcal", "server")
+		cmd := exec.Command(os.Args[0], "server")
 		if err := wf.RunInBackground("server", cmd); err != nil {
 			wf.FatalError(err)
 		}
@@ -180,8 +187,6 @@ func run() {
 			err = doUpdateCalendars()
 		case opts.Events:
 			err = doUpdateEvents()
-		case opts.Icons:
-			err = doUpdateIcons()
 		case opts.Workflow:
 			err = doUpdateWorkflow()
 		}
