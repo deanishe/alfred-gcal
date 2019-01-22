@@ -111,6 +111,7 @@ func alfredEnv() map[string]string {
 		"alfred_workflow_name":     Name,
 		"alfred_workflow_cache":    CacheDir,
 		"alfred_workflow_data":     DataDir,
+		"GO111MODULE":              "on", // for building
 	}
 }
 

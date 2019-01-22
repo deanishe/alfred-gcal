@@ -71,39 +71,6 @@ func doDates() error {
 	}
 
 	wf.WarnEmpty("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
-	/*
-		if opts.DateFormat == "" { // show default list
-		} else {
-			t, err := parseDate(opts.DateFormat)
-			if err != nil {
-				wf.Warn("Invalid date", "Format is YYYY-MM-DD, YYYMMDD or [+|-]NN[d|w]")
-				return nil
-			}
-			parsed = true
-			dates = append(dates, t)
-		}
-
-		for _, t := range dates {
-			var sub, title string
-			dateStr := t.Format(timeFormat)
-			longDate := t.Format(timeFormatLong)
-			title = relativeDays(t, !parsed)
-			sub = dateStr
-			if parsed {
-				title, sub = longDate, title
-			}
-			icon := iconDefault
-			if t.Equal(today) {
-				icon = iconCalToday
-			}
-			wf.NewItem(title).
-				Subtitle(sub).
-				Arg(dateStr).
-				Autocomplete(dateStr).
-				Valid(true).
-				Icon(icon)
-		}
-	*/
 
 	wf.SendFeedback()
 	return nil

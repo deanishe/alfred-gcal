@@ -1174,9 +1174,9 @@ variables={allvars}
 				<string></string>
 				<key>script</key>
 				<string>test -n "$date" &amp;&amp; {
-  ./gcal events --date="$date" "$1"
+  ./gcal events --date="$date" -- "$1"
 } || {
-  ./gcal events "$1"
+  ./gcal events -- "$1"
 }</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>

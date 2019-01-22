@@ -14,7 +14,7 @@ func doReload() error {
 	wf.Rerun(0.1)
 
 	wf.NewItem("Progress…").
-		Icon(reloadIcon())
+		Icon(ReloadIcon())
 
 	wf.SendFeedback()
 

@@ -27,7 +27,6 @@ import (
 // var Default = Build
 
 var (
-	mod     = sh.RunCmd("go", "mod")
 	workDir string
 )
 
@@ -36,6 +35,11 @@ func init() {
 	if workDir, err = os.Getwd(); err != nil {
 		panic(err)
 	}
+}
+
+func mod(args ...string) error {
+	argv := append([]string{"mod"}, args...)
+	return sh.RunWith(alfredEnv(), "go", argv...)
 }
 
 // Aliases are mage command aliases.
@@ -66,7 +70,7 @@ func Build() error {
 		}
 	}()
 
-	if err := sh.Run("go", "build", "-o", "./build/gcal", "."); err != nil {
+	if err := sh.RunWith(alfredEnv(), "go", "build", "-o", "./build/gcal", "."); err != nil {
 		return err
 	}
 
@@ -254,9 +258,10 @@ func Link() error {
 
 	if exists(target) {
 		fmt.Println("removing existing workflow ...")
-		if err := os.RemoveAll(target); err != nil {
-			return err
-		}
+	}
+	// try to remove it anyway, as dangling symlinks register as existing
+	if err := os.RemoveAll(target); err != nil && !os.IsNotExist(err) {
+		return err
 	}
 
 	build, err := filepath.Abs("build")

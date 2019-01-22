@@ -14,7 +14,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	aw "github.com/deanishe/awgo"
@@ -40,7 +39,7 @@ gcal [<command>] [options] [<query>]
 
 Usage:
     gcal dates [--] [<format>]
-    gcal events [--date=<date>] [<query>]
+    gcal events [--date=<date>] [--] [<query>]
     gcal calendars [<query>]
     gcal toggle <calID>
     gcal update (workflow|calendars|events) [<date>]
@@ -122,16 +121,13 @@ func init() {
 
 	auth = NewAuthenticator(tokenFile, []byte(secret))
 
+	// Workflow settings from Alfred's configuration sheet.
 	useAppleMaps = wf.Config.GetBool("APPLE_MAPS")
-
-	n := wf.Config.GetInt("SCHEDULE_DAYS", 3)
-	scheduleDuration = time.Hour * time.Duration(n*24)
-	n = wf.Config.GetInt("EVENT_CACHE_MINS", 30)
-	maxAgeEvents = time.Minute * time.Duration(n)
-
+	scheduleDuration = time.Hour * time.Duration(wf.Config.GetInt("SCHEDULE_DAYS", 3)*24)
+	maxAgeEvents = time.Minute * time.Duration(wf.Config.GetInt("EVENT_CACHE_MINS", 30))
 }
 
-// Parse command-line flags
+// Parse command-line flags.
 func parseFlags() error {
 
 	opts = &options{}
@@ -166,6 +162,7 @@ func parseFlags() error {
 	return nil
 }
 
+// Main program entry point.
 func run() {
 	var err error
 
@@ -181,6 +178,8 @@ func run() {
 	}
 
 	switch {
+	// check for Update first as Calendars and Events are also
+	// set by the corresponding top-level commands.
 	case opts.Update:
 		switch {
 		case opts.Calendars:
@@ -226,22 +225,8 @@ func run() {
 	}
 }
 
+// Call via Workflow.Run() to rescue panics and show an error message
+// in Alfred.
 func main() {
 	wf.Run(run)
-}
-
-// Get an environment variable as an int.
-func envInt(name string, fallback int) int {
-	s := os.Getenv(name)
-	if s == "" {
-		log.Printf("[ERROR] environment variable \"%s\" isn't set", name)
-		return fallback
-	}
-	n, err := strconv.Atoi(s)
-	if err != nil {
-		log.Printf("[ERROR] environment variable \"%s\" is not a number: %s", name, s)
-		return fallback
-	}
-	log.Printf("[env] %s=%d", name, n)
-	return n
 }

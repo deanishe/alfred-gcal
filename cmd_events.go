@@ -49,7 +49,7 @@ func doEvents() error {
 		wf.NewItem("Fetching List of Calendars…").
 			Subtitle("List will reload shortly").
 			Valid(false).
-			Icon(reloadIcon())
+			Icon(ReloadIcon())
 
 		wf.Rerun(0.1)
 		wf.SendFeedback()
@@ -79,7 +79,7 @@ func doEvents() error {
 	if len(all) == 0 && wf.IsRunning("update-events") {
 		wf.NewItem("Fetching Events…").
 			Subtitle("Results will refresh shortly").
-			Icon(reloadIcon()).
+			Icon(ReloadIcon()).
 			Valid(false)
 
 		wf.Rerun(0.1)
@@ -88,9 +88,7 @@ func doEvents() error {
 	log.Printf("%d event(s) for %s", len(events), startTime.Format(timeFormat))
 
 	if t, ok := parseDate(opts.Query); ok {
-
 		parsed = t
-
 	}
 
 	if len(events) == 0 && opts.Query == "" {
@@ -103,7 +101,7 @@ func doEvents() error {
 	for _, e := range events {
 
 		// Show day indicator if this is the first event of a given day
-		if schedule && opts.Query == "" && midnight(e.Start).After(day) {
+		if schedule && midnight(e.Start).After(day) {
 
 			day = midnight(e.Start)
 
@@ -112,8 +110,6 @@ func doEvents() error {
 				Valid(true).
 				Icon(iconDay)
 		}
-
-		// icon := gen.Icon(eventIconFont, eventIconName, e.Colour)
 
 		icon := ColouredIcon(iconCalendar, e.Colour)
 

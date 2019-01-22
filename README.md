@@ -90,7 +90,7 @@ This workflow is released under the [MIT Licence][mit].
 It is heavily based on the [Google API libraries for Go][google-libs] ([BSD 3-clause licence][google-licence]) and [AwGo][awgo] libraries ([MIT][mit]), and of course, [Google Calendar][gcal].
 
 
-The icons are from [Elusive Icons][elusive], [Font Awesome][awesome], [Material Icons][material], [Weather Icons][weather] (all [SIL][sil]) and [Octicons][octicons] ([MIT][mit]), via the [workflow icon generator][icongen].
+The icons are from or based on [Font Awesome][awesome] and [Weather Icons][weather] (both [SIL][sil]).
 
 
 [gcal]: https://calendar.google.com/calendar/
@@ -104,9 +104,6 @@ The icons are from [Elusive Icons][elusive], [Font Awesome][awesome], [Material 
 [issues]: https://github.com/deanishe/alfred-gcal/issues
 [sil]: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 [mit]: https://opensource.org/licenses/MIT
-[elusive]: https://github.com/aristath/elusive-iconfont
 [awesome]: http://fortawesome.github.io/Font-Awesome/
-[material]: http://zavoloklom.github.io/material-design-iconic-font/
-[octicons]: https://octicons.github.com/
 [weather]: https://erikflowers.github.io/weather-icons/
-[icongen]: http://icons.deanishe.net
+

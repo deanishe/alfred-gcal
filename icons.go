@@ -43,7 +43,7 @@ var (
 	iconMap             = &aw.Icon{Value: "icons/map.png"}
 	iconNext            = &aw.Icon{Value: "icons/next.png"}
 	iconPrevious        = &aw.Icon{Value: "icons/previous.png"}
-	iconReload          = &aw.Icon{Value: "icons/reload.png"}
+	iconLoading         = &aw.Icon{Value: "icons/loading.png"}
 	iconUpdateOK        = &aw.Icon{Value: "icons/update-ok.png"}
 	iconUpdateAvailable = &aw.Icon{Value: "icons/update-available.png"}
 	iconWarning         = &aw.Icon{Value: "icons/warning.png"}
@@ -185,7 +185,10 @@ func ParseHexColour(s string) (color.RGBA, error) {
 	return c, err
 }
 
-func reloadIcon() *aw.Icon {
+// ReloadIcon returns a spinner icon. It rotates by 15 deg on every
+// subsequent call. Use with wf.Reload(0.1) to implement an animated
+// spinner.
+func ReloadIcon() *aw.Icon {
 	var (
 		step    = 15
 		max     = (45 / step) - 1
@@ -201,7 +204,7 @@ func reloadIcon() *aw.Icon {
 	wf.Var("RELOAD_PROGRESS", fmt.Sprintf("%d", next))
 
 	if current == 0 {
-		return iconReload
+		return iconLoading
 	}
 
 	return &aw.Icon{Value: fmt.Sprintf("icons/loading-%d.png", current*step)}
