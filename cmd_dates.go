@@ -34,12 +34,13 @@ func doDates() error {
 
 		parsed = true
 
-		s := t.Format(timeFormat)
+		short := t.Format(timeFormat)
+		long := t.Format(timeFormatLong)
 
-		wf.NewItem(t.Format(timeFormatLong)).
+		wf.NewItem(long).
 			Subtitle(relativeDays(t, false)).
-			Arg(s).
-			Autocomplete(s).
+			Arg(short).
+			Autocomplete(short).
 			Valid(true).
 			Icon(iconDefault)
 
@@ -47,9 +48,10 @@ func doDates() error {
 		for i := -3; i < 4; i++ {
 
 			var (
-				t    = midnight(today.Add(oneDay * time.Duration(i)))
-				s    = t.Format(timeFormat)
-				icon = iconDefault
+				t     = midnight(today.Add(oneDay * time.Duration(i)))
+				long  = t.Format(timeFormatLong)
+				short = t.Format(timeFormat)
+				icon  = iconDefault
 			)
 
 			if t.Equal(today) {
@@ -57,9 +59,10 @@ func doDates() error {
 			}
 
 			wf.NewItem(relativeDays(t, true)).
-				Subtitle(s).
-				Arg(s).
-				Autocomplete(s).
+				Subtitle(short).
+				Match(long + " " + t.Format("Monday")).
+				Arg(short).
+				Autocomplete(short).
 				Valid(true).
 				Icon(icon)
 

@@ -114,7 +114,13 @@ func doEvents() error {
 		icon := ColouredIcon(iconCalendar, e.Colour)
 
 		sub := fmt.Sprintf("%s – %s / %s",
-			e.Start.Local().Format("15:04"), e.End.Local().Format("15:04"), e.CalendarTitle)
+			e.Start.Local().Format("15:04"),
+			e.End.Local().Format("15:04"),
+			e.CalendarTitle)
+
+		if e.Location != "" {
+			sub = sub + " / " + e.Location
+		}
 
 		it := wf.NewItem(e.Title).
 			Subtitle(sub).

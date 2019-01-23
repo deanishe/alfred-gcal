@@ -23,7 +23,6 @@ import (
 const (
 	previewServerURL = "localhost:61433"
 	quitAfter        = 60 * time.Second
-	// quitAfter = 20 * time.Second
 )
 
 // previewURL returns a preview server URL.
@@ -33,7 +32,6 @@ func previewURL(t time.Time, eventID string) string {
 	v.Set("date", midnight(t).Format(timeFormat))
 	v.Set("event", eventID)
 	u.RawQuery = v.Encode()
-	log.Printf("[preview] url=%s", u.String())
 	return u.String()
 }
 
