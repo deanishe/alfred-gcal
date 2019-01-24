@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	aw "github.com/deanishe/awgo"
 )
 
 var (
@@ -27,6 +29,16 @@ var (
 
 // doDates shows a list of dates in Alfred.
 func doDates() error {
+
+	if len(accounts) == 0 {
+		wf.NewItem("No Accounts Configured").
+			Subtitle("Action this item to add a Google account").
+			Autocomplete("workflow:login").
+			Icon(aw.IconWarning)
+
+		wf.SendFeedback()
+		return nil
+	}
 
 	var parsed bool
 

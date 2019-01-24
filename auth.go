@@ -11,15 +11,15 @@ package main
 import (
 	"crypto/rand"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
 	"sync"
 
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -27,7 +27,8 @@ import (
 )
 
 const (
-	authServerURL = "localhost:61432"
+	authServerURL  = "localhost:61432"
+	userEmailScope = "https://www.googleapis.com/auth/userinfo.email"
 )
 
 type response struct {
@@ -35,21 +36,29 @@ type response struct {
 	err  error
 }
 
+// UserInfo contains Google user email and picture.
+type UserInfo struct {
+	Email  string `json:"email"`   // User's email address
+	Avatar string `json:"picture"` // URL of avatar
+}
+
 // Authenticator creates an authenticated Google API client
 type Authenticator struct {
-	Secret    []byte
-	TokenFile string
-	state     string
+	Secret  []byte
+	Account *Account
+	state   string
 
 	client *http.Client
 	mu     sync.Mutex
 
+	// set when authentication fails so other goroutines don't
+	// repeatedly try to log in
 	Failed bool
 }
 
 // NewAuthenticator creates a new Authenticator
-func NewAuthenticator(tokenFile string, secret []byte) *Authenticator {
-	return &Authenticator{Secret: secret, TokenFile: tokenFile}
+func NewAuthenticator(acc *Account, secret []byte) *Authenticator {
+	return &Authenticator{Account: acc, Secret: secret}
 }
 
 // GetClient returns an authenticated Google API client
@@ -58,6 +67,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
+	// bail out as previous authentication attempt has failed
 	if a.Failed {
 		return nil, errors.New("authentication failed")
 	}
@@ -75,25 +85,41 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	a.state = fmt.Sprintf("%x", b)
 
 	ctx := context.Background()
-	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarReadonlyScope)
+	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarReadonlyScope, userEmailScope)
 	if err != nil {
-		return nil, fmt.Errorf("load config: %v", err)
+		return nil, errors.Wrap(err, "load config")
 	}
 
-	tok, err := a.tokenFromFile()
-	if err != nil {
-		tok, err = a.tokenFromWeb(cfg)
-		if err != nil {
+	var save bool
+	if a.Account.Token == nil {
+		if err = a.tokenFromWeb(cfg); err != nil {
 			a.Failed = true
-			return nil, fmt.Errorf("token from web: %v", err)
+			return nil, errors.Wrap(err, "token from web")
 		}
-		a.saveToken(tok)
+		save = true
+
 	}
 
-	a.client = cfg.Client(ctx, tok)
+	a.client = cfg.Client(ctx, a.Account.Token)
+
+	// If Account is empty, fetch user info from Google API
+	if a.Account.Name == "" {
+		if err := a.getUserInfo(); err != nil {
+			return nil, err
+		}
+		save = true
+	}
+
+	if save {
+		if err = a.Account.Save(); err != nil {
+			return nil, errors.Wrap(err, "save account")
+		}
+	}
+
 	return a.client, nil
 }
 
+/*
 // tokenFromFile loads the oauth2 token from a file
 func (a *Authenticator) tokenFromFile() (*oauth2.Token, error) {
 	f, err := os.Open(a.TokenFile)
@@ -115,23 +141,91 @@ func (a *Authenticator) saveToken(tok *oauth2.Token) error {
 	defer f.Close()
 	return json.NewEncoder(f).Encode(tok)
 }
+*/
 
 // tokenFromWeb initiates web-based authentication and retrieves the oauth2 token
-func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) (*oauth2.Token, error) {
-	if err := a.openAuthURL(cfg); err != nil {
-		return nil, fmt.Errorf("open auth URL: %v", err)
+func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) error {
+
+	var (
+		code  string
+		token *oauth2.Token
+		err   error
+	)
+
+	if err = a.openAuthURL(cfg); err != nil {
+		return errors.Wrap(err, "open auth URL")
 	}
 
-	code, err := a.codeFromLocalServer()
-	if err != nil {
-		return nil, fmt.Errorf("get token from local server: %v", err)
+	if code, err = a.codeFromLocalServer(); err != nil {
+		return errors.Wrap(err, "get token from local server")
 	}
 
-	tok, err := cfg.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		return nil, fmt.Errorf("token from web: %v", err)
+	if token, err = cfg.Exchange(oauth2.NoContext, code); err != nil {
+		return errors.Wrap(err, "token from web")
 	}
-	return tok, nil
+
+	a.Account.Token = token
+
+	return nil
+}
+
+func (a *Authenticator) getUserInfo() error {
+
+	var (
+		resp *http.Response
+		data []byte
+		err  error
+	)
+
+	if resp, err = a.client.Get("https://accounts.google.com/.well-known/openid-configuration"); err != nil {
+		return fmt.Errorf("get user info: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if data, err = ioutil.ReadAll(resp.Body); err != nil {
+		return fmt.Errorf("read user response: %v", err)
+	}
+
+	s := struct {
+		Endpoint string `json:"userinfo_endpoint"`
+	}{}
+
+	if err = json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("parse OpenID JSON: %v", err)
+	}
+
+	log.Printf("[auth] fetching user info from %s ...", s.Endpoint)
+
+	if resp, err = a.client.Get(s.Endpoint); err != nil {
+		return fmt.Errorf("read userinfo_endpoint: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if data, err = ioutil.ReadAll(resp.Body); err != nil {
+		return fmt.Errorf("read userinfo_endpoint response: %v", err)
+	}
+
+	// log.Printf("[auth] response=%s", string(data))
+
+	st := struct {
+		Email  string `json:"email"`
+		Avatar string `json:"picture"`
+	}{}
+
+	if err := json.Unmarshal(data, &st); err != nil {
+		return errors.Wrap(err, "unmarshal userinfo")
+	}
+
+	a.Account.Name = st.Email
+	a.Account.Email = st.Email
+	a.Account.AvatarURL = st.Avatar
+
+	log.Printf("[auth] fetching user avatar ...")
+	if err := download(a.Account.AvatarURL, a.Account.IconPath()); err != nil {
+		return errors.Wrap(err, "fetch avatar")
+	}
+
+	return nil
 }
 
 // openAuthURL opens the Google API authentication URL in the default browser

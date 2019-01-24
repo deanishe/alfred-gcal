@@ -15,6 +15,7 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -30,8 +31,11 @@ import (
 var (
 	apiURL = "http://icons.deanishe.net/icon"
 	// Static icons
+	iconAccount         = &aw.Icon{Value: "icons/account.png"}
+	iconAccountAdd      = &aw.Icon{Value: "icons/account-add.png"}
 	iconDefault         = &aw.Icon{Value: "icon.png"} // Workflow icon
 	iconCalendar        = &aw.Icon{Value: "icons/calendar.png"}
+	iconCalendars       = &aw.Icon{Value: "icons/calendars.png"}
 	iconCalOff          = &aw.Icon{Value: "icons/calendar-off.png"}
 	iconCalOn           = &aw.Icon{Value: "icons/calendar-on.png"}
 	iconCalToday        = &aw.Icon{Value: "icons/calendar-today.png"}
@@ -47,6 +51,8 @@ var (
 	iconUpdateOK        = &aw.Icon{Value: "icons/update-ok.png"}
 	iconUpdateAvailable = &aw.Icon{Value: "icons/update-available.png"}
 	iconWarning         = &aw.Icon{Value: "icons/warning.png"}
+	iconAppleMaps       = &aw.Icon{Value: "/Applications/Maps.app", Type: aw.IconTypeFileIcon}
+	iconGoogleMaps      = &aw.Icon{Value: "icons/google-maps.png"}
 
 	// Font & name of dynamic icons
 	eventIconFont = "material"
@@ -99,6 +105,67 @@ func ColouredIcon(icon *aw.Icon, colour string) *aw.Icon {
 	}
 
 	return &aw.Icon{Value: path}
+}
+
+/*
+// WebIcon retrieves an image from a URL.
+func WebIcon(URL string, fallback *aw.Icon) *aw.Icon {
+	if fallback == nil {
+		fallback = iconDefault
+	}
+
+	name := fmt.Sprintf("%x%s", md5.Sum([]byte(URL)), filepath.Ext(URL))
+	p := filepath.Join(cacheDirIcons, name)
+
+	if !util.PathExists(p) {
+		if err := download(URL, p); err != nil {
+			log.Printf("[icons] ERR: %v", err)
+			return fallback
+		}
+	}
+
+	return &aw.Icon{Value: p}
+}
+*/
+
+var client = &http.Client{
+	Transport: &http.Transport{
+		Dial: (&net.Dialer{
+			Timeout:   60 * time.Second,
+			KeepAlive: 60 * time.Second,
+		}).Dial,
+		TLSHandshakeTimeout:   30 * time.Second,
+		ResponseHeaderTimeout: 30 * time.Second,
+		ExpectContinueTimeout: 10 * time.Second,
+	},
+}
+
+func download(URL, path string) error {
+
+	r, err := client.Get(URL)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	fmt.Printf("[%d] %s\n", r.StatusCode, URL)
+	if r.StatusCode > 299 {
+		return fmt.Errorf("bad HTTP response: [%d] %s", r.StatusCode, URL)
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := io.Copy(f, r.Body); err != nil {
+		return err
+	}
+
+	log.Printf("[icons] saved %q to %q\n", URL, path)
+
+	return nil
 }
 
 func generateIcon(src, dest string, c color.RGBA) error {

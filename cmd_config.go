@@ -16,27 +16,88 @@ import (
 	"strings"
 
 	aw "github.com/deanishe/awgo"
-	"github.com/deanishe/awgo/util"
+	"github.com/pkg/errors"
 )
 
 // doConfig shows configuration options.
 func doConfig() error {
 	wf.Var("CALENDAR_APP", "") // Open links in default browser, not CALENDAR_APP
-	wf.NewItem("Active Calendars").
-		Subtitle("Turn calendars on/off").
-		Icon(iconCalOn).
+
+	if opts.Query == "" {
+		wf.Configure(aw.SuppressUIDs(true))
+	}
+
+	if len(accounts) > 0 {
+
+		wf.NewItem("Active Calendars…").
+			Subtitle("Turn calendars on/off").
+			UID("calendars").
+			Icon(iconCalendars).
+			Valid(true).
+			Var("action", "calendars")
+
+		wf.NewItem("Add Account…").
+			Subtitle("Action this item to add a Google account").
+			UID("add-account").
+			Autocomplete("workflow:login").
+			Icon(iconAccountAdd)
+
+	} else {
+
+		wf.NewItem("No Accounts Configured").
+			Subtitle("Action this item to add a Google account").
+			UID("add-account").
+			Autocomplete("workflow:login").
+			Icon(aw.IconWarning)
+	}
+
+	for _, acc := range accounts {
+
+		wf.NewItem(acc.Name).
+			Subtitle("↩ to remove account").
+			UID(acc.Name).
+			Arg(acc.Name).
+			Valid(true).
+			Icon(acc.Icon()).
+			Var("action", "logout").
+			Var("account", acc.Name)
+
+	}
+
+	var (
+		name  = "Google Maps"
+		other = "Apple Maps"
+		icon  = iconGoogleMaps
+		arg   = "apple"
+	)
+
+	if opts.UseAppleMaps {
+		name, other = other, name
+		icon = iconAppleMaps
+		arg = "google"
+	}
+
+	wf.NewItem("Open Locations in "+name).
+		Subtitle("Toggle this setting to use "+other).
+		UID("location").
+		Arg(arg).
 		Valid(true).
-		Var("action", "calendars")
+		Icon(icon).
+		Var("action", "set").
+		Var("key", "maps").
+		Var("value", arg)
 
 	if wf.UpdateAvailable() {
 		wf.NewItem("An Update is Available").
 			Subtitle("A newer version of the workflow is available").
+			UID("update").
 			Autocomplete("workflow:update").
 			Icon(iconUpdateAvailable).
 			Valid(false)
 	} else {
 		wf.NewItem("Workflow is up to Date").
 			Subtitle("Action to force update check").
+			UID("update").
 			Icon(iconUpdateOK).
 			Valid(true).
 			Var("action", "update")
@@ -44,6 +105,7 @@ func doConfig() error {
 
 	wf.NewItem("Open Documentation").
 		Subtitle("Open workflow README in your browser").
+		UID("docs").
 		Arg(readmeURL).
 		Valid(true).
 		Icon(iconDocs).
@@ -51,6 +113,7 @@ func doConfig() error {
 
 	wf.NewItem("Get Help").
 		Subtitle("Open alfredforum.com thread in your browser").
+		UID("forum").
 		Arg(forumURL).
 		Valid(true).
 		Icon(iconHelp).
@@ -58,6 +121,7 @@ func doConfig() error {
 
 	wf.NewItem("Report Issue").
 		Subtitle("Open GitHub issues in your browser").
+		UID("issues").
 		Arg(helpURL).
 		Valid(true).
 		Icon(iconIssue).
@@ -65,6 +129,7 @@ func doConfig() error {
 
 	wf.NewItem("Clear Cached Calendars & Events").
 		Subtitle("Remove cached list of calendars and events").
+		UID("clear").
 		Icon(iconDelete).
 		Valid(true).
 		Var("action", "clear")
@@ -96,7 +161,35 @@ func doToggle() error {
 	for ID := range IDs {
 		active = append(active, ID)
 	}
-	return wf.Cache.StoreJSON("active.json", active)
+
+	if err := wf.Cache.StoreJSON("active.json", active); err != nil {
+		return errors.Wrap(err, "save active calendar list")
+	}
+
+	// calendars have changed, so delete cached schedules
+	return clearEvents()
+}
+
+// doLogout removes an account.
+func doLogout() error {
+
+	wf.Configure(aw.TextErrors(true))
+
+	for _, acc := range accounts {
+		if acc.Name == opts.Account {
+			if err := wf.Cache.Store(acc.CacheName(), nil); err != nil {
+				return errors.Wrap(err, "delete account file")
+			}
+			if err := os.Remove(acc.IconPath()); err != nil && !os.IsNotExist(err) {
+				return errors.Wrap(err, "delete account avatar")
+			}
+
+			log.Printf("[logout] removed account %q", opts.Account)
+		}
+	}
+
+	// delete cached schedules now calendars have changed
+	return clearEvents()
 }
 
 // doClear removes cached calendars and events.
@@ -104,29 +197,42 @@ func doClear() error {
 	log.Print("clearing cached calendars and events…")
 	wf.Configure(aw.TextErrors(true))
 
-	paths := []string{filepath.Join(wf.CacheDir(), "calendars.json")}
-
-	files, err := ioutil.ReadDir(wf.CacheDir())
-	if err != nil {
-		return err
+	if err := clearEvents(); err != nil {
+		return errors.Wrap(err, "clear cached data")
 	}
 
-	for _, fi := range files {
-		fn := fi.Name()
-		if strings.HasPrefix(fn, "events-") && strings.HasSuffix(fn, ".json") {
-			paths = append(paths, filepath.Join(wf.CacheDir(), fn))
+	for _, acc := range accounts {
+		acc.Calendars = []*Calendar{}
+		if err := acc.Save(); err != nil {
+			return errors.Wrap(err, "remove account calendars")
 		}
 	}
 
-	for _, p := range paths {
-		if err := os.Remove(p); err != nil {
-			if os.IsNotExist(err) {
-				continue
-			}
-			log.Printf("[ERROR] couldn't delete \"%s\": %v", util.PrettyPath(p), err)
-			return err
-		}
-		log.Printf("deleted \"%s\"", util.PrettyPath(p))
-	}
 	return nil
+}
+
+// delete cached events.
+func clearEvents() error {
+
+	var (
+		infos []os.FileInfo
+		err   error
+	)
+
+	if infos, err = ioutil.ReadDir(wf.CacheDir()); err != nil {
+		return errors.Wrap(err, "read cache directory")
+	}
+
+	for _, fi := range infos {
+		name := fi.Name()
+		if strings.HasPrefix(name, "events-") && strings.HasSuffix(name, ".json") {
+			if err = os.Remove(filepath.Join(wf.CacheDir(), name)); err != nil {
+				return errors.Wrap(err, "delete events cache file")
+			}
+
+			log.Printf("[cache] deleted %q", name)
+		}
+	}
+
+	return err
 }

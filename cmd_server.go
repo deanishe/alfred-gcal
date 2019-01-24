@@ -69,7 +69,6 @@ func doStartServer() error {
 			mu.Unlock()
 			log.Printf("[preview] %0.0fs since last request", d.Seconds())
 			if d >= quitAfter {
-				log.Print("[preview] stopping server ...")
 				if err := srv.Shutdown(context.Background()); err != nil {
 					log.Printf("[preview] server shutdown error: %v", err)
 				}

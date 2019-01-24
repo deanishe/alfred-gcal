@@ -36,17 +36,29 @@ func doUpdateWorkflow() error {
 // Fetch and cache list of calendars.
 func doUpdateCalendars() error {
 
+	var (
+		acc *Account
+		err error
+	)
+
 	wf.Configure(aw.TextErrors(true))
 
 	log.Print("[update] reloading calendars…")
 
-	cals, err := FetchCalendars(auth)
-	if err != nil {
-		log.Printf("[update] ERR: retrieve calendars: %v", err)
-		return err
+	if len(accounts) == 0 {
+		log.Print("[update] no Google accounts configured")
 	}
 
-	return wf.Cache.StoreJSON("calendars.json", cals)
+	for _, acc = range accounts {
+
+		if err = acc.FetchCalendars(); err != nil {
+			return err
+		}
+
+		log.Printf("[update] %d calendar(s) in account %q", len(acc.Calendars), acc.Name)
+	}
+
+	return nil
 }
 
 // Fetch events for a specified date.
@@ -55,50 +67,72 @@ func doUpdateEvents() error {
 	wf.Configure(aw.TextErrors(true))
 
 	var (
-		events = []*Event{}
-		name   = fmt.Sprintf("events-%s.json", startTime.Format(timeFormat))
+		name   = fmt.Sprintf("events-%s.json", opts.StartTime.Format(timeFormat))
+		cals   []*Calendar
+		events []*Event
+		err    error
 	)
 
-	log.Printf("[update] fetching events for %s ...", startTime.Format(timeFormat))
+	log.Printf("[update] fetching events for %s ...", opts.StartTime.Format(timeFormat))
 
 	if err := clearOldFiles(); err != nil {
 		log.Printf("[update] ERR: delete old cache files: %v", err)
 	}
 
-	cals, err := activeCalendars()
-	if err != nil {
-		log.Printf("[update] ERR: load active calendars: %v", err)
+	if cals, err = activeCalendars(); err != nil {
 		return err
 	}
+
+	if len(accounts) == 0 {
+		log.Print("[update] no Google accounts configured")
+		return nil
+	}
+
+	if len(cals) == 0 {
+		log.Print("[update] no active calendars")
+		return nil
+	}
+
 	log.Printf("[update] %d active calendar(s)", len(cals))
 
 	// Fetch events in parallel
 	var (
-		ch = make(chan *Event)
-		wg sync.WaitGroup
+		ch     = make(chan *Event)
+		wg     sync.WaitGroup
+		wanted = make(map[string]bool, len(cals)) // IDs of calendars to update
 	)
+
+	for _, c := range cals {
+		wanted[c.ID] = true
+	}
 
 	wg.Add(len(cals))
 
-	for _, c := range cals {
+	for _, acc := range accounts {
 
-		go func(c *Calendar) {
+		for _, c := range acc.Calendars {
 
-			defer wg.Done()
-
-			evs, err := FetchEvents(auth, c, startTime)
-			if err != nil {
-				log.Printf("[update] ERR: fetching events for calendar %q: %v", c.Title, err)
-				return
+			if _, ok := wanted[c.ID]; !ok {
+				continue
 			}
 
-			log.Printf("[update] %d event(s) in calendar %q", len(evs), c.Title)
+			go func(c *Calendar) {
 
-			for _, e := range evs {
-				ch <- e
-				// events = append(events, e)
-			}
-		}(c)
+				defer wg.Done()
+
+				evs, err := acc.FetchEvents(c, opts.StartTime)
+				if err != nil {
+					log.Printf("[update] ERR: fetching events for calendar %q: %v", c.Title, err)
+					return
+				}
+
+				log.Printf("[update] %d event(s) in calendar %q", len(evs), c.Title)
+
+				for _, e := range evs {
+					ch <- e
+				}
+			}(c)
+		}
 	}
 
 	// Close channel when all goroutines are done

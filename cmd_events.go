@@ -21,6 +21,17 @@ import (
 
 // doEvents shows a list of events in Alfred.
 func doEvents() error {
+
+	if len(accounts) == 0 {
+		wf.NewItem("No Accounts Configured").
+			Subtitle("Action this item to add a Google account").
+			Autocomplete("workflow:login").
+			Icon(aw.IconWarning)
+
+		wf.SendFeedback()
+		return nil
+	}
+
 	var (
 		cals []*Calendar
 		err  error
@@ -40,22 +51,30 @@ func doEvents() error {
 			return nil
 		}
 
+		if err == errNoCalendars {
+
+			if !wf.IsRunning("update-calendars") {
+				cmd := exec.Command(os.Args[0], "update", "calendars")
+				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
+					return errors.Wrap(err, "run calendar update")
+				}
+			}
+
+			wf.NewItem("Fetching List of Calendars…").
+				Subtitle("List will reload shortly").
+				Valid(false).
+				Icon(ReloadIcon())
+
+			wf.Rerun(0.1)
+			wf.SendFeedback()
+
+			return nil
+		}
+
 		return err
 	}
 
 	log.Printf("%d active calendar(s)", len(cals))
-
-	if len(cals) == 0 && wf.IsRunning("update-calendars") {
-		wf.NewItem("Fetching List of Calendars…").
-			Subtitle("List will reload shortly").
-			Valid(false).
-			Icon(ReloadIcon())
-
-		wf.Rerun(0.1)
-		wf.SendFeedback()
-
-		return nil
-	}
 
 	var (
 		all    []*Event
@@ -63,13 +82,13 @@ func doEvents() error {
 		parsed time.Time
 	)
 
-	if all, err = loadEvents(startTime, cals...); err != nil {
+	if all, err = loadEvents(opts.StartTime, cals...); err != nil {
 		return errors.Wrap(err, "load events")
 	}
 
 	// Filter out events after cutoff
 	for _, e := range all {
-		if !schedule && e.Start.After(endTime) {
+		if !opts.ScheduleMode && e.Start.After(opts.EndTime) {
 			break
 		}
 		events = append(events, e)
@@ -85,14 +104,14 @@ func doEvents() error {
 		wf.Rerun(0.1)
 	}
 
-	log.Printf("%d event(s) for %s", len(events), startTime.Format(timeFormat))
+	log.Printf("%d event(s) for %s", len(events), opts.StartTime.Format(timeFormat))
 
 	if t, ok := parseDate(opts.Query); ok {
 		parsed = t
 	}
 
 	if len(events) == 0 && opts.Query == "" {
-		wf.NewItem(fmt.Sprintf("No Events on %s", startTime.Format(timeFormatLong))).
+		wf.NewItem(fmt.Sprintf("No Events on %s", opts.StartTime.Format(timeFormatLong))).
 			Icon(ColouredIcon(iconCalendar, yellow))
 	}
 
@@ -101,7 +120,7 @@ func doEvents() error {
 	for _, e := range events {
 
 		// Show day indicator if this is the first event of a given day
-		if schedule && midnight(e.Start).After(day) {
+		if opts.ScheduleMode && midnight(e.Start).After(day) {
 
 			day = midnight(e.Start)
 
@@ -126,13 +145,13 @@ func doEvents() error {
 			Subtitle(sub).
 			Icon(icon).
 			Arg(e.URL).
-			Quicklook(previewURL(startTime, e.ID)).
+			Quicklook(previewURL(opts.StartTime, e.ID)).
 			Valid(true).
 			Var("action", "open")
 
 		if e.Location != "" {
 			app := "Google Maps"
-			if useAppleMaps {
+			if opts.UseAppleMaps {
 				app = "Apple Maps"
 			}
 
@@ -146,16 +165,16 @@ func doEvents() error {
 		}
 	}
 
-	if !schedule {
+	if !opts.ScheduleMode {
 		// Navigation items
-		prev := startTime.AddDate(0, 0, -1)
+		prev := opts.StartTime.AddDate(0, 0, -1)
 		wf.NewItem("Previous: "+relativeDate(prev)).
 			Icon(iconPrevious).
 			Arg(prev.Format(timeFormat)).
 			Valid(true).
 			Var("action", "date")
 
-		next := startTime.AddDate(0, 0, 1)
+		next := opts.StartTime.AddDate(0, 0, 1)
 		wf.NewItem("Next: "+relativeDate(next)).
 			Icon(iconNext).
 			Arg(next.Format(timeFormat)).
@@ -193,7 +212,7 @@ func loadEvents(t time.Time, cal ...*Calendar) ([]*Event, error) {
 		jobName = "update-events"
 	)
 
-	if wf.Cache.Expired(name, maxAgeEvents) {
+	if wf.Cache.Expired(name, opts.MaxAgeEvents()) {
 		wf.Rerun(0.1)
 		if !wf.IsRunning(jobName) {
 			cmd := exec.Command(os.Args[0], "update", "events", dateStr)

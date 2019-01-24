@@ -296,6 +296,7 @@ func Icons() error {
 		src, dest, colour string
 	}{
 		{"calendar.png", "icon.png", blue},
+		{"calendar.png", "calendars.png", blue},
 		{"calendar.png", "calendar-today.png", green},
 		{"docs.png", "help.png", green},
 	}
@@ -320,119 +321,10 @@ func Icons() error {
 	return nil
 }
 
-/*
-
-type iconCfg struct {
-	name, colour, font, icon string
-}
-
-// Icons download workflow icons
-func oldIcons() error {
-
-	var (
-		api   = "http://icons.deanishe.net/icon"
-		f     *os.File
-		icons []iconCfg
-		err   error
-	)
-
-	if f, err = os.Open("./icons/icons.txt"); err != nil {
-		return err
-	}
-	defer f.Close()
-
-	var (
-		n   int
-		scn = bufio.NewScanner(f)
-	)
-
-	for scn.Scan() {
-		n++
-		s := scn.Text()
-		s = strings.TrimSpace(s)
-		if s == "" || strings.HasPrefix(s, "#") {
-			continue
-		}
-
-		row := strings.Fields(s)
-		if len(row) != 4 {
-			return fmt.Errorf("line %d: need 4 fields not %d: %s", n, len(row), s)
-		}
-
-		icons = append(icons, iconCfg{name: row[0] + ".png", font: row[1], colour: row[2], icon: row[3]})
-	}
-	if err = scn.Err(); err != nil {
-		return err
-	}
-
-	for i, icon := range icons {
-		p := filepath.Join("./icons", icon.name)
-		if exists(p) {
-			fmt.Printf("[%d/%d] skipped existing: %s\n", i+1, len(icons), icon.name)
-			continue
-		}
-
-		fmt.Printf("[%d/%d] %s ...\n", i+1, len(icons), icon.name)
-		u := fmt.Sprintf("%s/%s/%s/%s", api, icon.font, icon.colour, icon.icon)
-		if err := download(u, p); err != nil {
-			return err
-		}
-	}
-
-	sizes := []int{}
-	step := 15
-	for i := step; i < 45; i += step {
-		sizes = append(sizes, i)
-	}
-
-	return rotateIcon("./icons/reload.png", sizes)
-	// return rotateIcon("./icons/reload.png", []float64{22.5})
-}
-
-var client = &http.Client{
-	Transport: &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout:   60 * time.Second,
-			KeepAlive: 60 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout:   30 * time.Second,
-		ResponseHeaderTimeout: 30 * time.Second,
-		ExpectContinueTimeout: 10 * time.Second,
-	},
-}
-
-func download(URL, path string) error {
-
-	r, err := client.Get(URL)
-	if err != nil {
-		return err
-	}
-	defer r.Body.Close()
-
-	fmt.Printf("[%d] %s\n", r.StatusCode, URL)
-	if r.StatusCode > 299 {
-		return fmt.Errorf("bad HTTP response: [%d] %s", r.StatusCode, URL)
-	}
-
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if _, err := io.Copy(f, r.Body); err != nil {
-		return err
-	}
-
-	fmt.Printf("wrote %s\n", path)
-
-	return nil
-}
-*/
-
 // Deps ensure dependencies
 func Deps() error {
-	fmt.Println("installing deps ...")
+	mg.Deps(cleanDeps)
+	fmt.Println("downloading deps ...")
 	return mod("download")
 }
 

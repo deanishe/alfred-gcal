@@ -42,8 +42,10 @@ Usage:
     gcal events [--date=<date>] [--] [<query>]
     gcal calendars [<query>]
     gcal toggle <calID>
+    gcal set <key> <value>
     gcal update (workflow|calendars|events) [<date>]
     gcal config [<query>]
+    gcal logout <account>
     gcal clear
     gcal open [--app=<app>] <url>
     gcal server
@@ -54,25 +56,15 @@ Options:
     -a --app <app>     Application to open URLs in.
     -d --date <date>   Date to show events for (format YYYY-MM-DD).
     -h --help          Show this message and exit.
+    --version          Show workflow version and exit.
 `
-	auth *Authenticator
-	wf   *aw.Workflow
+	wf       *aw.Workflow
+	accounts []*Account
 
-	tokenFile     string // Google credentials
 	cacheDirIcons string // directory generated icons are stored in
 
-	useAppleMaps bool
-	schedule     bool // show in schedule mode
-
-	// Cache ages
-	maxAgeCals   = time.Hour * 3
-	maxAgeEvents time.Duration
-
 	// CLI args
-	opts             *options
-	startTime        time.Time
-	scheduleDuration time.Duration
-	endTime          time.Time
+	opts *options
 
 	// Workflow icon colours
 	green  = "03ae03"
@@ -89,9 +81,11 @@ type options struct {
 	Config    bool
 	Dates     bool
 	Events    bool
+	Logout    bool
 	Open      bool
 	Reload    bool
 	Server    bool
+	Set       bool
 	Toggle    bool
 	Update    bool
 
@@ -99,38 +93,56 @@ type options struct {
 	Workflow bool
 
 	// flags
+	Account    string
 	App        string
 	CalendarID string `docopt:"<calID>"`
 	Date       string `docopt:"<date>,--date"`
 	DateFormat string `docopt:"<format>"`
 	Query      string
 	URL        string `docopt:"<url>"`
+	Key        string
+	Value      string
+
+	// options
+	UseAppleMaps   bool `env:"APPLE_MAPS"`
+	EventCacheMins int  `env:"EVENT_CACHE_MINS"`
+	ScheduleDays   int  `env:"SCHEDULE_DAYS"`
+	ScheduleMode   bool
+	StartTime      time.Time
+	EndTime        time.Time
 
 	// needed to make '--' work
 	EndOfOptions bool `docopt:"--"`
 }
 
+func (opts *options) MaxAgeCalendar() time.Duration { return time.Hour * 3 }
+
+func (opts *options) MaxAgeEvents() time.Duration {
+	d := time.Duration(opts.EventCacheMins) * time.Minute
+	if d < time.Minute*5 {
+		d = time.Minute * 5
+	}
+
+	return d
+}
+
+func (opts *options) ScheduleDuration() time.Duration {
+	return time.Duration(opts.ScheduleDays) * time.Hour * 24
+}
+
 func init() {
+
+	opts = &options{}
 
 	wf = aw.New(update.GitHub(repo), aw.HelpURL(helpURL))
 	wf.MagicActions.Register(&calendarMagic{})
+	wf.MagicActions.Register(&loginMagic{})
 
-	tokenFile = filepath.Join(wf.CacheDir(), "gapi-token.json")
 	cacheDirIcons = filepath.Join(wf.CacheDir(), "icons")
-	util.MustExist(cacheDirIcons)
-
-	auth = NewAuthenticator(tokenFile, []byte(secret))
-
-	// Workflow settings from Alfred's configuration sheet.
-	useAppleMaps = wf.Config.GetBool("APPLE_MAPS")
-	scheduleDuration = time.Hour * time.Duration(wf.Config.GetInt("SCHEDULE_DAYS", 3)*24)
-	maxAgeEvents = time.Minute * time.Duration(wf.Config.GetInt("EVENT_CACHE_MINS", 30))
 }
 
 // Parse command-line flags.
 func parseFlags() error {
-
-	opts = &options{}
 
 	args, err := docopt.ParseArgs(usage, wf.Args(), wf.Version())
 	if err != nil {
@@ -138,26 +150,31 @@ func parseFlags() error {
 	}
 
 	if err := args.Bind(opts); err != nil {
-		return errors.Wrap(err, "docopts bind")
+		return errors.Wrap(err, "bind docopt")
+	}
+
+	if err := wf.Config.To(opts); err != nil {
+		return errors.Wrap(err, "bind config")
 	}
 
 	// We don't need to be fussy about the default start and end times:
 	// The default startTime is only used in schedule mode, and it (and endTime)
 	// will be set to midnight if user specifies a date.
-	startTime = time.Now().Local()
-	schedule = true
+	opts.StartTime = time.Now().Local()
+	opts.ScheduleMode = true
 
 	if opts.Date != "" {
-		startTime, err = time.ParseInLocation(timeFormat, opts.Date, time.Local)
+		opts.StartTime, err = time.ParseInLocation(timeFormat, opts.Date, time.Local)
 		if err != nil {
 			return err
 		}
-		schedule = false
+		opts.ScheduleMode = false
 	}
 
-	endTime = startTime.Add(time.Hour * 24)
+	opts.EndTime = opts.StartTime.Add(time.Hour * 24)
 
-	log.Printf("query=%q, startTime=%v, endTime=%v", opts.Query, startTime, endTime)
+	log.Printf("[main] query=%q, startTime=%v, endTime=%v",
+		opts.Query, opts.StartTime, opts.EndTime)
 
 	return nil
 }
@@ -166,8 +183,15 @@ func parseFlags() error {
 func run() {
 	var err error
 
-	if err := parseFlags(); err != nil {
+	if err = parseFlags(); err != nil {
 		wf.FatalError(err)
+	}
+
+	// Ensure required directories exist
+	util.MustExist(cacheDirIcons)
+
+	if accounts, err = LoadAccounts(); err != nil {
+		panic(err)
 	}
 
 	if !wf.IsRunning("server") {
@@ -189,7 +213,6 @@ func run() {
 		case opts.Workflow:
 			err = doUpdateWorkflow()
 		}
-		break
 	case opts.Calendars:
 		err = doListCalendars()
 	case opts.Clear:
@@ -200,8 +223,12 @@ func run() {
 		err = doDates()
 	case opts.Events:
 		err = doEvents()
+	case opts.Logout:
+		err = doLogout()
 	case opts.Open:
 		err = doOpen()
+	case opts.Set:
+		err = doSet()
 	case opts.Server:
 		err = doStartServer()
 	case opts.Toggle:
@@ -225,8 +252,7 @@ func run() {
 	}
 }
 
-// Call via Workflow.Run() to rescue panics and show an error message
-// in Alfred.
+// Call via Workflow.Run() to rescue panics and show an error message in Alfred.
 func main() {
 	wf.Run(run)
 }

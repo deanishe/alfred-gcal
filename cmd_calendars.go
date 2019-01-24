@@ -10,85 +10,15 @@ package main
 
 import (
 	"errors"
+	"log"
 	"os"
 	"os/exec"
 )
 
 var (
-	errNoActive = errors.New("no active calendars")
+	errNoActive    = errors.New("no active calendars")
+	errNoCalendars = errors.New("no calendars")
 )
-
-// Active calendars
-type Active []string
-
-func allCalendars() ([]*Calendar, error) {
-	var (
-		cals    []*Calendar
-		name    = "calendars.json"
-		jobName = "update-calendars"
-	)
-
-	if wf.Cache.Expired(name, maxAgeCals) {
-
-		if !wf.IsRunning(jobName) {
-
-			wf.Rerun(0.1)
-
-			cmd := exec.Command(os.Args[0], "update", "calendars")
-			if err := wf.RunInBackground(jobName, cmd); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if wf.Cache.Exists(name) {
-		if err := wf.Cache.LoadJSON("calendars.json", &cals); err != nil {
-			return nil, err
-		}
-	}
-
-	return cals, nil
-}
-
-func activeCalendarIDs() (map[string]bool, error) {
-	var (
-		IDs   []string
-		IDMap = map[string]bool{}
-		name  = "active.json"
-	)
-
-	if !wf.Cache.Exists(name) {
-		return IDMap, errNoActive
-	}
-
-	if err := wf.Cache.LoadJSON(name, &IDs); err != nil {
-		return nil, err
-	}
-	for _, id := range IDs {
-		IDMap[id] = true
-	}
-	return IDMap, nil
-}
-
-func activeCalendars() ([]*Calendar, error) {
-	var cals []*Calendar
-	IDs, err := activeCalendarIDs()
-	if err != nil {
-		return nil, err
-	}
-
-	all, err := allCalendars()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, c := range all {
-		if IDs[c.ID] {
-			cals = append(cals, c)
-		}
-	}
-	return cals, nil
-}
 
 // doListCalendars shows a list of available calendars in Alfred.
 func doListCalendars() error {
@@ -113,22 +43,125 @@ func doListCalendars() error {
 	}
 
 	for _, c := range cals {
+
 		on := active[c.ID]
 		icon := iconCalOff
 		if on {
 			icon = iconCalOn
 		}
+		sub := c.Description + " / " + c.AccountName
+		if c.Description == "" {
+			sub = c.AccountName
+		}
+
 		wf.NewItem(c.Title).
-			Subtitle(c.Description).
+			Subtitle(sub).
 			Icon(icon).
 			Arg(c.ID).
 			Match(c.Title).
 			Valid(true)
 	}
+
 	if opts.Query != "" {
 		wf.Filter(opts.Query)
 	}
+
 	wf.WarnEmpty("No Calendars", "Did you log in with the right account?")
 	wf.SendFeedback()
+
 	return nil
+}
+
+func allCalendars() ([]*Calendar, error) {
+	var (
+		jobName = "update-calendars"
+		cals    []*Calendar
+		expired bool
+	)
+
+	for _, acc := range accounts {
+		if wf.Cache.Expired(acc.CacheName(), opts.MaxAgeCalendar()) {
+			expired = true
+		}
+		cals = append(cals, acc.Calendars...)
+	}
+
+	if expired {
+
+		if !wf.IsRunning(jobName) {
+
+			wf.Rerun(0.1)
+
+			cmd := exec.Command(os.Args[0], "update", "calendars")
+			if err := wf.RunInBackground(jobName, cmd); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	log.Printf("[main] %d calendar(s) in %d account(s)", len(cals), len(accounts))
+
+	if len(cals) == 0 {
+		return nil, errNoCalendars
+	}
+
+	return cals, nil
+}
+
+func activeCalendarIDs() (map[string]bool, error) {
+	var (
+		IDs   []string
+		IDMap = map[string]bool{}
+		name  = "active.json"
+	)
+
+	if !wf.Cache.Exists(name) {
+		return nil, errNoActive
+	}
+
+	if err := wf.Cache.LoadJSON(name, &IDs); err != nil {
+		return nil, err
+	}
+	for _, id := range IDs {
+		IDMap[id] = true
+	}
+
+	if len(IDMap) == 0 {
+		return nil, errNoActive
+	}
+
+	return IDMap, nil
+}
+
+func activeCalendars() ([]*Calendar, error) {
+	var (
+		cals []*Calendar
+		all  []*Calendar
+		IDs  map[string]bool
+		err  error
+	)
+
+	if IDs, err = activeCalendarIDs(); err != nil {
+		return nil, err
+	}
+
+	if all, err = allCalendars(); err != nil {
+		return nil, err
+	}
+
+	if len(all) == 0 {
+		return nil, errNoCalendars
+	}
+
+	for _, c := range all {
+		if IDs[c.ID] {
+			cals = append(cals, c)
+		}
+	}
+
+	if len(cals) == 0 {
+		return nil, errNoActive
+	}
+
+	return cals, nil
 }
