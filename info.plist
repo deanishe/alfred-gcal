@@ -1792,10 +1792,8 @@ Configuration
 		<key>SCHEDULE_DAYS</key>
 		<string>5</string>
 	</dict>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
-	<string>0.2.0</string>
+	<string>0.2.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

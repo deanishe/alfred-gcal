@@ -185,18 +185,28 @@ func Dist() error {
 			return err
 		}
 
-		fmt.Printf("    %s\n", name)
+		fmt.Printf("    %s (%v)\n", name, fi.Mode().Perm())
 
 		var (
 			f  *os.File
 			zf io.Writer
+			fh *zip.FileHeader
 		)
+
+		fh = &zip.FileHeader{
+			Name:   name,
+			Method: zip.Deflate,
+		}
+
+		// fh.SetModTime(fi.ModTime())
+		fh.SetMode(fi.Mode().Perm())
+
 		if f, err = os.Open(path); err != nil {
 			return err
 		}
 		defer f.Close()
 
-		if zf, err = w.Create(name); err != nil {
+		if zf, err = w.CreateHeader(fh); err != nil {
 			return err
 		}
 		if _, err = io.Copy(zf, f); err != nil {

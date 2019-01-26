@@ -149,6 +149,10 @@ func doToggle() error {
 	if err != nil && err != errNoActive {
 		return err
 	}
+	if err == errNoActive {
+		IDs = map[string]bool{}
+	}
+
 	if IDs[opts.CalendarID] {
 		log.Printf("deactivating calendar %s ...", opts.CalendarID)
 		delete(IDs, opts.CalendarID)
