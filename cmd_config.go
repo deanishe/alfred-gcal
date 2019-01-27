@@ -179,8 +179,18 @@ func doLogout() error {
 
 	wf.Configure(aw.TextErrors(true))
 
+	log.Printf("[logout] account=%q", opts.Account)
+
+	deleteMe := map[string]bool{}
+
 	for _, acc := range accounts {
+
 		if acc.Name == opts.Account {
+
+			for _, cal := range acc.Calendars {
+				deleteMe[cal.ID] = true
+			}
+
 			if err := wf.Cache.Store(acc.CacheName(), nil); err != nil {
 				return errors.Wrap(err, "delete account file")
 			}
@@ -190,6 +200,32 @@ func doLogout() error {
 
 			log.Printf("[logout] removed account %q", opts.Account)
 		}
+	}
+
+	var (
+		active []string
+		IDs    map[string]bool
+		err    error
+	)
+
+	// Remove active calendars belonging to account
+	if IDs, err = activeCalendarIDs(); err != nil && err != errNoActive {
+		return errors.Wrap(err, "get active calendars")
+	}
+
+	// No active calendars to change
+	if err == errNoActive || len(deleteMe) == 0 {
+		return nil
+	}
+
+	for id := range IDs {
+		if !deleteMe[id] {
+			active = append(active, id)
+		}
+	}
+
+	if err := wf.Cache.StoreJSON("active.json", active); err != nil {
+		return errors.Wrap(err, "save active calendar list")
 	}
 
 	// delete cached schedules now calendars have changed

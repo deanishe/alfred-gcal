@@ -45,6 +45,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>11608658-A256-4625-AAD6-517E03644231</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>511603A0-C36D-4AB7-9520-0BA422CE5F05</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>14C00640-8D74-4090-AB64-5BDEA4489D4D</key>
 		<array>
 			<dict>
@@ -210,6 +223,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>8AC32FD1-345E-425D-93AB-F9DF7A7A5F9C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>3F938397-2CD9-45EB-B0CD-FC962DC9031F</key>
 		<array>
@@ -317,11 +340,11 @@
 		</array>
 		<key>7A027517-A35E-4028-89FF-50172EA74768</key>
 		<array/>
-		<key>7EB61C22-CD91-47F4-902C-623543484613</key>
+		<key>8604FB3C-23FB-467B-803B-17F6A73073AB</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>6EE9D14F-1529-44ED-B4E7-CCB061EF7C47</string>
+				<string>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -330,11 +353,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>8604FB3C-23FB-467B-803B-17F6A73073AB</key>
+		<key>8AC32FD1-345E-425D-93AB-F9DF7A7A5F9C</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</string>
+				<string>11608658-A256-4625-AAD6-517E03644231</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -361,19 +384,6 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>3F938397-2CD9-45EB-B0CD-FC962DC9031F</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>983048BF-738E-4CAD-954B-C3788BD1D2B1</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>7EB61C22-CD91-47F4-902C-623543484613</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -1337,51 +1347,9 @@ variables={allvars}
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>7EB61C22-CD91-47F4-902C-623543484613</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>./gcal set "$key" "$value"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
 			<string>CC4D4EE8-FD80-4612-948E-378FB259148C</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>config</string>
-				<key>passinputasargument</key>
-				<false/>
-				<key>passvariables</key>
-				<false/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>6EE9D14F-1529-44ED-B4E7-CCB061EF7C47</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1405,6 +1373,48 @@ variables={allvars}
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./gcal logout "$account"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>11608658-A256-4625-AAD6-517E03644231</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>config</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>511603A0-C36D-4AB7-9520-0BA422CE5F05</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>inputstring</key>
 				<string>{var:action}</string>
 				<key>matchcasesensitive</key>
@@ -1412,12 +1422,12 @@ variables={allvars}
 				<key>matchmode</key>
 				<integer>0</integer>
 				<key>matchstring</key>
-				<string>set</string>
+				<string>logout</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.filter</string>
 			<key>uid</key>
-			<string>983048BF-738E-4CAD-954B-C3788BD1D2B1</string>
+			<string>8AC32FD1-345E-425D-93AB-F9DF7A7A5F9C</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1473,6 +1483,15 @@ Configuration
 			<integer>600</integer>
 			<key>ypos</key>
 			<integer>1810</integer>
+		</dict>
+		<key>11608658-A256-4625-AAD6-517E03644231</key>
+		<dict>
+			<key>note</key>
+			<string>Remove account</string>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>2110</integer>
 		</dict>
 		<key>14C00640-8D74-4090-AB64-5BDEA4489D4D</key>
 		<dict>
@@ -1561,6 +1580,13 @@ Configuration
 			<key>ypos</key>
 			<integer>830</integer>
 		</dict>
+		<key>511603A0-C36D-4AB7-9520-0BA422CE5F05</key>
+		<dict>
+			<key>xpos</key>
+			<integer>750</integer>
+			<key>ypos</key>
+			<integer>2110</integer>
+		</dict>
 		<key>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</key>
 		<dict>
 			<key>note</key>
@@ -1620,13 +1646,6 @@ Configuration
 			<key>ypos</key>
 			<integer>520</integer>
 		</dict>
-		<key>6EE9D14F-1529-44ED-B4E7-CCB061EF7C47</key>
-		<dict>
-			<key>xpos</key>
-			<integer>500</integer>
-			<key>ypos</key>
-			<integer>1940</integer>
-		</dict>
 		<key>78516575-8825-4598-A589-2F3475E25DF8</key>
 		<dict>
 			<key>note</key>
@@ -1643,21 +1662,21 @@ Configuration
 			<key>ypos</key>
 			<integer>360</integer>
 		</dict>
-		<key>7EB61C22-CD91-47F4-902C-623543484613</key>
-		<dict>
-			<key>note</key>
-			<string>Change configuration</string>
-			<key>xpos</key>
-			<integer>320</integer>
-			<key>ypos</key>
-			<integer>1940</integer>
-		</dict>
 		<key>8604FB3C-23FB-467B-803B-17F6A73073AB</key>
 		<dict>
 			<key>xpos</key>
 			<integer>40</integer>
 			<key>ypos</key>
 			<integer>1010</integer>
+		</dict>
+		<key>8AC32FD1-345E-425D-93AB-F9DF7A7A5F9C</key>
+		<dict>
+			<key>note</key>
+			<string>$action = logout</string>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>2140</integer>
 		</dict>
 		<key>8C1ADFA7-4A9A-4218-9125-F0D4C2763FEC</key>
 		<dict>
@@ -1681,15 +1700,6 @@ Configuration
 			<integer>920</integer>
 			<key>ypos</key>
 			<integer>1780</integer>
-		</dict>
-		<key>983048BF-738E-4CAD-954B-C3788BD1D2B1</key>
-		<dict>
-			<key>note</key>
-			<string>$action = set</string>
-			<key>xpos</key>
-			<integer>190</integer>
-			<key>ypos</key>
-			<integer>1970</integer>
 		</dict>
 		<key>998D04E2-9538-4970-9233-1E57F0929ED0</key>
 		<dict>
@@ -1793,7 +1803,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.2.1</string>
+	<string>0.2.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
