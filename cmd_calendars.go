@@ -9,10 +9,11 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/pkg/errors"
 )
 
 var (
@@ -22,8 +23,34 @@ var (
 
 // doListCalendars shows a list of available calendars in Alfred.
 func doListCalendars() error {
-	cals, err := allCalendars()
-	if err != nil {
+
+	var (
+		cals []*Calendar
+		err  error
+	)
+
+	if cals, err = allCalendars(); err != nil {
+
+		if err == errNoCalendars {
+
+			if !wf.IsRunning("update-calendars") {
+				cmd := exec.Command(os.Args[0], "update", "calendars")
+				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
+					return errors.Wrap(err, "run calendar update")
+				}
+			}
+
+			wf.NewItem("Fetching List of Calendars…").
+				Subtitle("List will reload shortly").
+				Valid(false).
+				Icon(ReloadIcon())
+
+			wf.Rerun(0.1)
+			wf.SendFeedback()
+
+			return nil
+		}
+
 		return err
 	}
 
@@ -32,7 +59,7 @@ func doListCalendars() error {
 			Subtitle("List will reload shortly").
 			Valid(false).
 			Icon(ReloadIcon())
-		wf.Rerun(0.3)
+		wf.Rerun(0.1)
 		wf.SendFeedback()
 		return nil
 	}
