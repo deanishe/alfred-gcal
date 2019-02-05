@@ -148,19 +148,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>35996F87-80D8-414C-BFC0-8713D145E02F</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>2512097E-AB92-489E-93AF-0146592CB0D4</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>38618982-EFBD-4CEE-AB65-D33F0BBD3C54</key>
 		<array>
 			<dict>
@@ -233,6 +220,26 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>FEE1E2D2-523D-4490-A8D4-6D906BED2E33</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>884E8F7D-D7F3-4C4E-B11C-BE7830799410</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>3F938397-2CD9-45EB-B0CD-FC962DC9031F</key>
 		<array>
@@ -251,7 +258,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>35996F87-80D8-414C-BFC0-8713D145E02F</string>
+				<string>2512097E-AB92-489E-93AF-0146592CB0D4</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -345,6 +352,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>884E8F7D-D7F3-4C4E-B11C-BE7830799410</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>50009EAD-DA7A-48FC-8F4F-C5EC1CAE4D97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -483,6 +503,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>EE1CC8A9-8FDF-4BC9-A5C6-A4CF2F886D97</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5EE513CB-126C-4EC9-8D51-7205A217CA03</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>FE9B2118-827D-416D-9829-1A9DC2CAACA4</key>
 		<array>
 			<dict>
@@ -498,6 +531,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>FEE1E2D2-523D-4490-A8D4-6D906BED2E33</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>EE1CC8A9-8FDF-4BC9-A5C6-A4CF2F886D97</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -850,11 +896,11 @@
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>calendars</string>
+				<string>action</string>
 				<key>passinputasargument</key>
-				<false/>
+				<true/>
 				<key>passvariables</key>
-				<false/>
+				<true/>
 				<key>workflowbundleid</key>
 				<string>self</string>
 			</dict>
@@ -864,29 +910,6 @@
 			<string>2512097E-AB92-489E-93AF-0146592CB0D4</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>./gcal toggle "$1"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>35996F87-80D8-414C-BFC0-8713D145E02F</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1431,6 +1454,105 @@ variables={allvars}
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./gcal toggle "$calendar"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>EE1CC8A9-8FDF-4BC9-A5C6-A4CF2F886D97</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>calendars</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>5EE513CB-126C-4EC9-8D51-7205A217CA03</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:action}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string>toggle</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>FEE1E2D2-523D-4490-A8D4-6D906BED2E33</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>config</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>50009EAD-DA7A-48FC-8F4F-C5EC1CAE4D97</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:action}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string>config</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>884E8F7D-D7F3-4C4E-B11C-BE7830799410</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Google Calendar
@@ -1512,7 +1634,7 @@ Configuration
 		<key>2512097E-AB92-489E-93AF-0146592CB0D4</key>
 		<dict>
 			<key>xpos</key>
-			<integer>560</integer>
+			<integer>400</integer>
 			<key>ypos</key>
 			<integer>1010</integer>
 		</dict>
@@ -1557,13 +1679,6 @@ Configuration
 			<key>ypos</key>
 			<integer>1510</integer>
 		</dict>
-		<key>35996F87-80D8-414C-BFC0-8713D145E02F</key>
-		<dict>
-			<key>xpos</key>
-			<integer>390</integer>
-			<key>ypos</key>
-			<integer>1010</integer>
-		</dict>
 		<key>38618982-EFBD-4CEE-AB65-D33F0BBD3C54</key>
 		<dict>
 			<key>xpos</key>
@@ -1579,6 +1694,13 @@ Configuration
 			<integer>210</integer>
 			<key>ypos</key>
 			<integer>830</integer>
+		</dict>
+		<key>50009EAD-DA7A-48FC-8F4F-C5EC1CAE4D97</key>
+		<dict>
+			<key>xpos</key>
+			<integer>750</integer>
+			<key>ypos</key>
+			<integer>2450</integer>
 		</dict>
 		<key>511603A0-C36D-4AB7-9520-0BA422CE5F05</key>
 		<dict>
@@ -1604,6 +1726,13 @@ Configuration
 			<integer>430</integer>
 			<key>ypos</key>
 			<integer>1340</integer>
+		</dict>
+		<key>5EE513CB-126C-4EC9-8D51-7205A217CA03</key>
+		<dict>
+			<key>xpos</key>
+			<integer>750</integer>
+			<key>ypos</key>
+			<integer>2280</integer>
 		</dict>
 		<key>62F44B78-0D8E-4215-BB14-E3950B214795</key>
 		<dict>
@@ -1668,6 +1797,15 @@ Configuration
 			<integer>40</integer>
 			<key>ypos</key>
 			<integer>1010</integer>
+		</dict>
+		<key>884E8F7D-D7F3-4C4E-B11C-BE7830799410</key>
+		<dict>
+			<key>note</key>
+			<string>$action = config</string>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>2480</integer>
 		</dict>
 		<key>8AC32FD1-345E-425D-93AB-F9DF7A7A5F9C</key>
 		<dict>
@@ -1770,9 +1908,18 @@ Configuration
 		<key>EAF06D56-D2F1-4FB9-B0D7-89D494AA865B</key>
 		<dict>
 			<key>xpos</key>
-			<integer>390</integer>
+			<integer>400</integer>
 			<key>ypos</key>
 			<integer>830</integer>
+		</dict>
+		<key>EE1CC8A9-8FDF-4BC9-A5C6-A4CF2F886D97</key>
+		<dict>
+			<key>note</key>
+			<string>Toggle calendar</string>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>2280</integer>
 		</dict>
 		<key>F5C23C7D-94BA-400C-8004-EC304CE8818D</key>
 		<dict>
@@ -1790,6 +1937,15 @@ Configuration
 			<key>ypos</key>
 			<integer>1480</integer>
 		</dict>
+		<key>FEE1E2D2-523D-4490-A8D4-6D906BED2E33</key>
+		<dict>
+			<key>note</key>
+			<string>$action = toggle</string>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>2310</integer>
+		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
@@ -1803,7 +1959,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.2.2</string>
+	<string>0.2.3</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

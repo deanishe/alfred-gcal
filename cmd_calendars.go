@@ -86,8 +86,16 @@ func doListCalendars() error {
 			Icon(icon).
 			Arg(c.ID).
 			Match(c.Title).
-			Valid(true)
+			Valid(true).
+			Var("action", "toggle").
+			Var("calendar", c.ID)
 	}
+
+	wf.NewItem("Back").
+		Subtitle("Back to configuration").
+		Icon(iconPrevious).
+		Valid(true).
+		Var("action", "config")
 
 	if opts.Query != "" {
 		wf.Filter(opts.Query)
