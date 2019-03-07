@@ -1959,7 +1959,7 @@ Configuration
 		<string>5</string>
 	</dict>
 	<key>version</key>
-	<string>0.2.3</string>
+	<string>0.2.4</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

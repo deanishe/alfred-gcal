@@ -185,7 +185,7 @@ func Dist() error {
 			return err
 		}
 
-		fmt.Printf("    %s (%v)\n", name, fi.Mode().Perm())
+		fmt.Printf("%v  %s\n", fi.Mode().Perm(), name)
 
 		var (
 			f  *os.File

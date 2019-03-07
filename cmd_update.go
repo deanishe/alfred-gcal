@@ -116,7 +116,7 @@ func doUpdateEvents() error {
 				continue
 			}
 
-			go func(c *Calendar) {
+			go func(c *Calendar, acc *Account) {
 
 				defer wg.Done()
 
@@ -131,7 +131,7 @@ func doUpdateEvents() error {
 				for _, e := range evs {
 					ch <- e
 				}
-			}(c)
+			}(c, acc)
 		}
 	}
 
