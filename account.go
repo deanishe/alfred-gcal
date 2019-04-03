@@ -250,6 +250,25 @@ func (a *Account) FetchEvents(cal *Calendar, start time.Time) ([]*Event, error) 
 	return events, nil
 }
 
+// QuickAdd creates a new event in the passed calendar from Account.
+func (a *Account) QuickAdd(calendarID string, quick string) error {
+
+	var (
+		srv *calendar.Service
+		err error
+	)
+
+	if srv, err = a.Service(); err != nil {
+		return errors.Wrap(err, "create service")
+	}
+
+	if _, err = srv.Events.QuickAdd(calendarID, quick).Do(); err != nil {
+		return errors.Wrap(err, "create new event error")
+	}
+
+	return err
+}
+
 // Check for OAuth2 error and  remove tokens if they've expired/been revoked.
 func (a *Account) handleAPIError(err error) error {
 

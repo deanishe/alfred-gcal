@@ -9,9 +9,11 @@
 package main
 
 import (
+	aw "github.com/deanishe/awgo"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -99,6 +101,80 @@ func doListCalendars() error {
 
 	if opts.Query != "" {
 		wf.Filter(opts.Query)
+	}
+
+	wf.WarnEmpty("No Calendars", "Did you log in with the right account?")
+	wf.SendFeedback()
+
+	return nil
+}
+
+// doListActiveCalendars shows a list of active calendars in Alfred.
+func doListActiveCalendars() error {
+
+	var (
+		cals []*Calendar
+		err  error
+	)
+
+	if cals, err = activeCalendars(); err != nil {
+
+		if err == errNoActive {
+
+			wf.NewItem("No Active Calendars").
+				Subtitle("Action this item to choose calendars").
+				Autocomplete("workflow:calendars").
+				Icon(aw.IconWarning)
+
+			wf.SendFeedback()
+
+			return nil
+		}
+
+		if err == errNoCalendars {
+
+			if !wf.IsRunning("update-calendars") {
+				cmd := exec.Command(os.Args[0], "update", "calendars")
+				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
+					return errors.Wrap(err, "run calendar update")
+				}
+			}
+
+			wf.NewItem("Fetching List of Calendars…").
+				Subtitle("List will reload shortly").
+				Valid(false).
+				Icon(ReloadIcon())
+
+			wf.Rerun(0.1)
+			wf.SendFeedback()
+
+			return nil
+		}
+
+		return err
+	}
+
+	for _, c := range cals {
+
+		title := c.Description + " / " + c.AccountName
+		if c.Description == "" {
+			title = c.AccountName
+		}
+
+		query := strings.Trim(opts.Query, " ")
+		sub := "Create '" + query + "' in " + c.Title
+		if query == "" {
+			sub = "Enter text to create event in " + c.Title
+		}
+
+		wf.NewItem(title).
+			Subtitle(sub).
+			Icon(iconCalOn).
+			Arg(c.ID).
+			Valid(true).
+			Var("action", "create").
+			Var("quick", opts.Query).
+			Var("calendar", c.ID)
 	}
 
 	wf.WarnEmpty("No Calendars", "Did you log in with the right account?")

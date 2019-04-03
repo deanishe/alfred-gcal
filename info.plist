@@ -6,6 +6,19 @@
 	<string>net.deanishe.alfred.gcal</string>
 	<key>connections</key>
 	<dict>
+		<key>048BC747-5A08-4884-8F2F-912D3AE5517F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CE59FD32-48E0-467C-AD19-1D9288B0DD2B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>0553156D-6606-42C4-8BE8-18AE49A7A6D6</key>
 		<array>
 			<dict>
@@ -240,6 +253,29 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>048BC747-5A08-4884-8F2F-912D3AE5517F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>3CCB9C03-CCBD-43F3-A51F-C95DBBD1A21C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>862EBB67-6E29-4467-AFE1-7E6717945CB6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>3F938397-2CD9-45EB-B0CD-FC962DC9031F</key>
 		<array>
@@ -360,6 +396,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>862EBB67-6E29-4467-AFE1-7E6717945CB6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>12391721-6113-4936-B640-C307F04B697C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>884E8F7D-D7F3-4C4E-B11C-BE7830799410</key>
 		<array>
 			<dict>
@@ -469,6 +518,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>BF14B152-A9EC-4FCE-97DA-F62C1C7846D3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>CE59FD32-48E0-467C-AD19-1D9288B0DD2B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8AD67C05-94E3-4D9A-A0C3-472555760802</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -1553,6 +1615,148 @@ variables={allvars}
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>./gcal create "$quick" "$calendar"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>CE59FD32-48E0-467C-AD19-1D9288B0DD2B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{var:quick}</string>
+				<key>title</key>
+				<string>New Event has been succesfully created</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>8AD67C05-94E3-4D9A-A0C3-472555760802</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{var:action}</string>
+				<key>matchcasesensitive</key>
+				<true/>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>matchstring</key>
+				<string>create</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>048BC747-5A08-4884-8F2F-912D3AE5517F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>gnew</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Loading...</string>
+				<key>script</key>
+				<string>./gcal active "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>And select calendar which need to be desctination</string>
+				<key>title</key>
+				<string>Type quick details about new event</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>862EBB67-6E29-4467-AFE1-7E6717945CB6</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>action</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>12391721-6113-4936-B640-C307F04B697C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>create</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>3CCB9C03-CCBD-43F3-A51F-C95DBBD1A21C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Google Calendar
@@ -1572,6 +1776,15 @@ Configuration
 `SCHEDULE_DAYS`: How many days' events to show in the "Upcoming Events" list (keyword: "gcal").</string>
 	<key>uidata</key>
 	<dict>
+		<key>048BC747-5A08-4884-8F2F-912D3AE5517F</key>
+		<dict>
+			<key>note</key>
+			<string>$action = create</string>
+			<key>xpos</key>
+			<integer>430</integer>
+			<key>ypos</key>
+			<integer>2650</integer>
+		</dict>
 		<key>0553156D-6606-42C4-8BE8-18AE49A7A6D6</key>
 		<dict>
 			<key>note</key>
@@ -1614,6 +1827,13 @@ Configuration
 			<integer>560</integer>
 			<key>ypos</key>
 			<integer>2110</integer>
+		</dict>
+		<key>12391721-6113-4936-B640-C307F04B697C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>390</integer>
+			<key>ypos</key>
+			<integer>2750</integer>
 		</dict>
 		<key>14C00640-8D74-4090-AB64-5BDEA4489D4D</key>
 		<dict>
@@ -1685,6 +1905,13 @@ Configuration
 			<integer>250</integer>
 			<key>ypos</key>
 			<integer>1510</integer>
+		</dict>
+		<key>3CCB9C03-CCBD-43F3-A51F-C95DBBD1A21C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>2750</integer>
 		</dict>
 		<key>3F938397-2CD9-45EB-B0CD-FC962DC9031F</key>
 		<dict>
@@ -1798,6 +2025,13 @@ Configuration
 			<key>ypos</key>
 			<integer>1010</integer>
 		</dict>
+		<key>862EBB67-6E29-4467-AFE1-7E6717945CB6</key>
+		<dict>
+			<key>xpos</key>
+			<integer>210</integer>
+			<key>ypos</key>
+			<integer>2750</integer>
+		</dict>
 		<key>884E8F7D-D7F3-4C4E-B11C-BE7830799410</key>
 		<dict>
 			<key>note</key>
@@ -1815,6 +2049,13 @@ Configuration
 			<integer>430</integer>
 			<key>ypos</key>
 			<integer>2140</integer>
+		</dict>
+		<key>8AD67C05-94E3-4D9A-A0C3-472555760802</key>
+		<dict>
+			<key>xpos</key>
+			<integer>750</integer>
+			<key>ypos</key>
+			<integer>2620</integer>
 		</dict>
 		<key>8C1ADFA7-4A9A-4218-9125-F0D4C2763FEC</key>
 		<dict>
@@ -1890,6 +2131,13 @@ Configuration
 			<integer>450</integer>
 			<key>ypos</key>
 			<integer>390</integer>
+		</dict>
+		<key>CE59FD32-48E0-467C-AD19-1D9288B0DD2B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>560</integer>
+			<key>ypos</key>
+			<integer>2620</integer>
 		</dict>
 		<key>D55FAAFD-ABA8-4B37-940B-CB883E3BB590</key>
 		<dict>

@@ -85,7 +85,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	a.state = fmt.Sprintf("%x", b)
 
 	ctx := context.Background()
-	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarReadonlyScope, userEmailScope)
+	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarScope, userEmailScope)
 	if err != nil {
 		return nil, errors.Wrap(err, "load config")
 	}
