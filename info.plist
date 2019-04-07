@@ -773,6 +773,8 @@
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -811,7 +813,7 @@
 			<key>uid</key>
 			<string>09A5FA54-F59A-45B7-8B66-A08BC6AB8EAC</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -852,6 +854,8 @@
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -890,7 +894,7 @@
 			<key>uid</key>
 			<string>3F938397-2CD9-45EB-B0CD-FC962DC9031F</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -918,6 +922,8 @@
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -954,7 +960,7 @@
 			<key>uid</key>
 			<string>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1253,6 +1259,8 @@ variables={allvars}
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -1293,7 +1301,7 @@ variables={allvars}
 			<key>uid</key>
 			<string>8C1ADFA7-4A9A-4218-9125-F0D4C2763FEC</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1950,16 +1958,16 @@ Configuration
 	<key>variables</key>
 	<dict>
 		<key>APPLE_MAPS</key>
-		<string>0</string>
+		<string>1</string>
 		<key>CALENDAR_APP</key>
 		<string></string>
 		<key>EVENT_CACHE_MINS</key>
 		<string>15</string>
 		<key>SCHEDULE_DAYS</key>
-		<string>5</string>
+		<string>7</string>
 	</dict>
 	<key>version</key>
-	<string>0.2.4</string>
+	<string>0.2.5</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

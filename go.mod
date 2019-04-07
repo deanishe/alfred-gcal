@@ -2,7 +2,7 @@ module github.com/deanishe/alfred-gcal
 
 require (
 	github.com/bmatcuk/doublestar v1.1.1
-	github.com/deanishe/awgo v0.15.0
+	github.com/deanishe/awgo v0.16.0-beta
 	github.com/disintegration/imaging v1.5.0
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/magefile/mage v1.8.0

@@ -6,6 +6,8 @@
 // Created on 2017-11-25
 //
 
+// +build !private
+
 package main
 
 // Google doesn't allow app keys to be stored in open-source source code.

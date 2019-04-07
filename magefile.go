@@ -45,6 +45,7 @@ func mod(args ...string) error {
 // Aliases are mage command aliases.
 var Aliases = map[string]interface{}{
 	"b": Build,
+	"c": Clean,
 	"d": Dist,
 	"l": Link,
 }
@@ -54,23 +55,8 @@ func Build() error {
 	mg.Deps(cleanBuild, Icons)
 	// mg.Deps(Deps)
 	fmt.Println("building ...")
-	if err := sh.Run("mv", "-v", "secret.go", "secret.go.tmp"); err != nil {
-		return err
-	}
-	if err := sh.Run("mv", "-v", "secret.go.private", "secret.go"); err != nil {
-		return err
-	}
 
-	defer func() {
-		if err := sh.Run("mv", "-v", "secret.go", "secret.go.private"); err != nil {
-			fmt.Printf("ERR: %v\n", err)
-		}
-		if err := sh.Run("mv", "-v", "secret.go.tmp", "secret.go"); err != nil {
-			fmt.Printf("ERR: %v\n", err)
-		}
-	}()
-
-	if err := sh.RunWith(alfredEnv(), "go", "build", "-o", "./build/gcal", "."); err != nil {
+	if err := sh.RunWith(alfredEnv(), "go", "build", "-tags", "$TAGS", "-o", "./build/gcal", "."); err != nil {
 		return err
 	}
 
@@ -78,9 +64,7 @@ func Build() error {
 	globs := []struct {
 		glob, dest string
 	}{
-		// {"../ical", ""},
 		{"*.png", ""},
-		// {"../mask.png", ""},
 		{"info.plist", ""},
 		{"*.html", ""},
 		{"README.md", ""},
@@ -139,7 +123,7 @@ func Run() error {
 	return sh.RunWith(alfredEnv(), "./gcal", "-h")
 }
 
-// Dist build an .alfred-workflow file in ./dist
+// Dist build an .alfredworkflow file in ./dist
 func Dist() error {
 	mg.SerialDeps(Clean, Build)
 	if err := os.MkdirAll("./dist", 0700); err != nil {
@@ -180,12 +164,23 @@ func Dist() error {
 			return nil
 		}
 
-		var name string
+		var (
+			name, orig string
+			info       os.FileInfo
+			mode       os.FileMode
+		)
 		if name, err = filepath.Rel("./build", path); err != nil {
 			return err
 		}
+		if orig, err = filepath.EvalSymlinks(path); err != nil {
+			return err
+		}
+		if info, err = os.Stat(orig); err != nil {
+			return err
+		}
+		mode = info.Mode()
 
-		fmt.Printf("%v  %s\n", fi.Mode().Perm(), name)
+		fmt.Printf("%v  %s\n", mode, name)
 
 		var (
 			f  *os.File
@@ -199,9 +194,9 @@ func Dist() error {
 		}
 
 		// fh.SetModTime(fi.ModTime())
-		fh.SetMode(fi.Mode().Perm())
+		fh.SetMode(mode.Perm())
 
-		if f, err = os.Open(path); err != nil {
+		if f, err = os.Open(orig); err != nil {
 			return err
 		}
 		defer f.Close()
@@ -258,12 +253,24 @@ func fold(s string) string {
 	return ascii
 }
 
+// Config display configuration
+func Config() {
+	fmt.Println("     Workflow name:", Name)
+	fmt.Println("         Bundle ID:", BundleID)
+	fmt.Println("  Workflow version:", Version)
+	fmt.Println("  Preferences file:", PrefsFile)
+	fmt.Println("       Sync folder:", SyncFolder)
+	fmt.Println("Workflow directory:", WorkflowDir)
+	fmt.Println("    Data directory:", DataDir)
+	fmt.Println("   Cache directory:", CacheDir)
+}
+
 // Link symlinks ./build directory to Alfred's workflow directory.
 func Link() error {
 	mg.Deps(Build)
 
 	fmt.Println("linking ./build to workflow directory ...")
-	target := filepath.Join(workflowDirectory(), BundleID)
+	target := filepath.Join(WorkflowDir, BundleID)
 	// fmt.Printf("target: %s\n", target)
 
 	if exists(target) {
@@ -336,6 +343,13 @@ func Deps() error {
 	mg.Deps(cleanDeps)
 	fmt.Println("downloading deps ...")
 	return mod("download")
+}
+
+// Vendor copy dependencies to ./vendor
+func Vendor() error {
+	mg.Deps(Deps)
+	fmt.Println("vendoring deps ...")
+	return mod("vendor")
 }
 
 // Clean remove build files

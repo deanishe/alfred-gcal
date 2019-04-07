@@ -6,8 +6,8 @@ github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24
 github.com/bmatcuk/doublestar v1.1.1 h1:YroD6BJCZBYx06yYFEWvUuKVWQn3vLLQAVmDmvTSaiQ=
 github.com/bmatcuk/doublestar v1.1.1/go.mod h1:UD6OnuiIn0yFxxA2le/rnRU1G4RaI4UvFv1sNto9p6w=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/deanishe/awgo v0.15.0 h1:ExG+fHtI7gLRVOk0RPsniVl4ks4gpt6YkHSk3w1ABYs=
-github.com/deanishe/awgo v0.15.0/go.mod h1:iS04UkOlaot9B69n8pPeXb804n4vxgDGl3QjXybu4nM=
+github.com/deanishe/awgo v0.16.0-beta h1:9mAsfwkLh0hneB0hqaN2cL0XP/3e9FzhNQdLOr8MmCM=
+github.com/deanishe/awgo v0.16.0-beta/go.mod h1:2a+ukSNkaIH6WWhuzH8f4yAOrODLct7bxaXaT6da9Gc=
 github.com/disintegration/imaging v1.5.0 h1:uYqUhwNmLU4K1FN44vhqS4TZJRAA4RhBINgbQlKyGi0=
 github.com/disintegration/imaging v1.5.0/go.mod h1:9B/deIUIrliYkyMTuXJd6OUFLcrZ2tf+3Qlwnaf/CjU=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815 h1:bWDMxwH3px2JBh6AyO7hdCn/PkvCZXii8TGj7sbtEbQ=
