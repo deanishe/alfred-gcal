@@ -10,7 +10,6 @@ package main
 
 import (
 	aw "github.com/deanishe/awgo"
-	"github.com/pkg/errors"
 	"log"
 )
 
@@ -30,10 +29,13 @@ func quickAdd() error {
 	log.Println("Creating event", opts.Quick, opts.CalendarID)
 
 	if err := createEvent(opts.Quick, opts.CalendarID); err != nil {
-		return errors.Wrap(err, "create event")
+		return err
 	}
 
-	wf.SendFeedback()
+	if err := doUpdateEvents(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

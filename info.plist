@@ -461,6 +461,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>92FC681E-1D4D-4E70-8010-84836DC8B371</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>532E1785-14EE-4BE7-B64A-BE7E809EDDF8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>998D04E2-9538-4970-9233-1E57F0929ED0</key>
 		<array>
 			<dict>
@@ -530,7 +543,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>8AD67C05-94E3-4D9A-A0C3-472555760802</string>
+				<string>92FC681E-1D4D-4E70-8010-84836DC8B371</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -693,27 +706,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>tomorrow</string>
-				<key>subtext</key>
-				<string>Tomorrow's events from your Google Calendar(s)</string>
-				<key>text</key>
-				<string>Tomorrow's Events</string>
-				<key>withspace</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>65A55A9B-1414-464D-A0FB-9A2CF705164C</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -737,6 +729,27 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>tomorrow</string>
+				<key>subtext</key>
+				<string>Tomorrow's events from your Google Calendar(s)</string>
+				<key>text</key>
+				<string>Tomorrow's Events</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>65A55A9B-1414-464D-A0FB-9A2CF705164C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>action</string>
 				<key>passinputasargument</key>
@@ -756,24 +769,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
-				<string>{query}</string>
-				<key>variables</key>
-				<dict>
-					<key>action</key>
-					<string>date</string>
-				</dict>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>BF14B152-A9EC-4FCE-97DA-F62C1C7846D3</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
@@ -787,21 +782,18 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>2</integer>
-				<key>keyword</key>
-				<string>yesterday</string>
-				<key>subtext</key>
-				<string>Yesterday's events from your Google Calendar(s)</string>
-				<key>text</key>
-				<string>Yesterday's Events</string>
-				<key>withspace</key>
-				<false/>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>variables</key>
+				<dict>
+					<key>action</key>
+					<string>date</string>
+				</dict>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>78516575-8825-4598-A589-2F3475E25DF8</string>
+			<string>BF14B152-A9EC-4FCE-97DA-F62C1C7846D3</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -827,6 +819,27 @@
 			<string>6CFB2AE8-7BAF-4DE6-B949-D0FF2DB50FD7</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>yesterday</string>
+				<key>subtext</key>
+				<string>Yesterday's events from your Google Calendar(s)</string>
+				<key>text</key>
+				<string>Yesterday's Events</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>78516575-8825-4598-A589-2F3475E25DF8</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -874,25 +887,6 @@
 			<string>09A5FA54-F59A-45B7-8B66-A08BC6AB8EAC</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>externaltriggerid</key>
-				<string>action</string>
-				<key>passinputasargument</key>
-				<true/>
-				<key>passvariables</key>
-				<true/>
-				<key>workflowbundleid</key>
-				<string>self</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.callexternaltrigger</string>
-			<key>uid</key>
-			<string>EAF06D56-D2F1-4FB9-B0D7-89D494AA865B</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -969,7 +963,20 @@
 			<key>type</key>
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>2512097E-AB92-489E-93AF-0146592CB0D4</string>
+			<string>EAF06D56-D2F1-4FB9-B0D7-89D494AA865B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>calendars</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>8604FB3C-23FB-467B-803B-17F6A73073AB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1021,32 +1028,19 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>triggerid</key>
-				<string>calendars</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
-			<key>uid</key>
-			<string>8604FB3C-23FB-467B-803B-17F6A73073AB</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>externaltriggerid</key>
-				<string>config</string>
+				<string>action</string>
 				<key>passinputasargument</key>
-				<false/>
+				<true/>
 				<key>passvariables</key>
-				<false/>
+				<true/>
 				<key>workflowbundleid</key>
 				<string>self</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>9FA29DC3-2E67-45B6-B93B-F33F57EDF7E7</string>
+			<string>2512097E-AB92-489E-93AF-0146592CB0D4</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1072,6 +1066,25 @@
 			<string>62F44B78-0D8E-4215-BB14-E3950B214795</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>config</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>9FA29DC3-2E67-45B6-B93B-F33F57EDF7E7</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1103,6 +1116,27 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>ERROR</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>F5C23C7D-94BA-400C-8004-EC304CE8818D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -1126,27 +1160,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>ERROR</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>F5C23C7D-94BA-400C-8004-EC304CE8818D</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>inputstring</key>
 				<string>{var:action}</string>
 				<key>matchcasesensitive</key>
@@ -1160,6 +1173,19 @@
 			<string>alfred.workflow.utility.filter</string>
 			<key>uid</key>
 			<string>5C211D72-B49C-4E67-BB21-5AA6934F0DCB</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>action</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>D55FAAFD-ABA8-4B37-940B-CB883E3BB590</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1191,36 +1217,10 @@
 			<integer>2</integer>
 		</dict>
 		<dict>
-			<key>config</key>
-			<dict>
-				<key>triggerid</key>
-				<string>action</string>
-			</dict>
 			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
+			<string>alfred.workflow.utility.hidealfred</string>
 			<key>uid</key>
-			<string>D55FAAFD-ABA8-4B37-940B-CB883E3BB590</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>.
-/---- ACTION IN ----\
-query={query}
-variables={allvars}
-\-------------------/</string>
-				<key>cleardebuggertext</key>
-				<false/>
-				<key>processoutputs</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.debug</string>
-			<key>uid</key>
-			<string>38618982-EFBD-4CEE-AB65-D33F0BBD3C54</string>
+			<string>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1244,10 +1244,23 @@ variables={allvars}
 			<integer>1</integer>
 		</dict>
 		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>.
+/---- ACTION IN ----\
+query={query}
+variables={allvars}
+\-------------------/</string>
+				<key>cleardebuggertext</key>
+				<false/>
+				<key>processoutputs</key>
+				<true/>
+			</dict>
 			<key>type</key>
-			<string>alfred.workflow.utility.hidealfred</string>
+			<string>alfred.workflow.utility.debug</string>
 			<key>uid</key>
-			<string>6CEAE7ED-F6DF-403F-988D-4E847AF569B3</string>
+			<string>38618982-EFBD-4CEE-AB65-D33F0BBD3C54</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1360,24 +1373,6 @@ variables={allvars}
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>variables</key>
-				<dict>
-					<key>date</key>
-					<string>{query}</string>
-				</dict>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>0D457EF4-A96F-4760-A4DC-07F46AE409C6</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>inputstring</key>
 				<string>{var:action}</string>
 				<key>matchcasesensitive</key>
@@ -1391,6 +1386,24 @@ variables={allvars}
 			<string>alfred.workflow.utility.filter</string>
 			<key>uid</key>
 			<string>29048BAE-27AC-42F1-B5B2-096753EDC2BF</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>variables</key>
+				<dict>
+					<key>date</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>0D457EF4-A96F-4760-A4DC-07F46AE409C6</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1641,21 +1654,37 @@ variables={allvars}
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{var:quick}</string>
-				<key>title</key>
-				<string>New Event has been succesfully created</string>
+				<key>externaltriggerid</key>
+				<string>action</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>8AD67C05-94E3-4D9A-A0C3-472555760802</string>
+			<string>532E1785-14EE-4BE7-B64A-BE7E809EDDF8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>variables</key>
+				<dict>
+					<key>action</key>
+					<string>date</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>92FC681E-1D4D-4E70-8010-84836DC8B371</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1728,6 +1757,19 @@ variables={allvars}
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>triggerid</key>
+				<string>create</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>3CCB9C03-CCBD-43F3-A51F-C95DBBD1A21C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>externaltriggerid</key>
 				<string>action</string>
 				<key>passinputasargument</key>
@@ -1741,19 +1783,6 @@ variables={allvars}
 			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
 			<string>12391721-6113-4936-B640-C307F04B697C</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>triggerid</key>
-				<string>create</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.trigger.external</string>
-			<key>uid</key>
-			<string>3CCB9C03-CCBD-43F3-A51F-C95DBBD1A21C</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1936,6 +1965,13 @@ Configuration
 			<key>ypos</key>
 			<integer>2110</integer>
 		</dict>
+		<key>532E1785-14EE-4BE7-B64A-BE7E809EDDF8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>750</integer>
+			<key>ypos</key>
+			<integer>2620</integer>
+		</dict>
 		<key>55D10CF4-8457-4AE5-9DC0-64A7E262D61D</key>
 		<dict>
 			<key>note</key>
@@ -2050,13 +2086,6 @@ Configuration
 			<key>ypos</key>
 			<integer>2140</integer>
 		</dict>
-		<key>8AD67C05-94E3-4D9A-A0C3-472555760802</key>
-		<dict>
-			<key>xpos</key>
-			<integer>750</integer>
-			<key>ypos</key>
-			<integer>2620</integer>
-		</dict>
 		<key>8C1ADFA7-4A9A-4218-9125-F0D4C2763FEC</key>
 		<dict>
 			<key>note</key>
@@ -2072,6 +2101,15 @@ Configuration
 			<integer>40</integer>
 			<key>ypos</key>
 			<integer>830</integer>
+		</dict>
+		<key>92FC681E-1D4D-4E70-8010-84836DC8B371</key>
+		<dict>
+			<key>note</key>
+			<string>$action to "date"</string>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>2650</integer>
 		</dict>
 		<key>969420B1-18E8-4F0B-AC39-06D038718311</key>
 		<dict>
@@ -2206,6 +2244,8 @@ Configuration
 		<key>SCHEDULE_DAYS</key>
 		<string>5</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>0.2.4</string>
 	<key>webaddress</key>
