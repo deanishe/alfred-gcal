@@ -109,20 +109,20 @@ func doListCalendars() error {
 	return nil
 }
 
-// doListActiveCalendars shows a list of active calendars in Alfred.
-func doListActiveCalendars() error {
+// doListWritableCalendars shows a list of active calendars in Alfred.
+func doListWritableCalendars() error {
 
 	var (
 		cals []*Calendar
 		err  error
 	)
 
-	if cals, err = activeCalendars(); err != nil {
+	if cals, err = writableCalendars(); err != nil {
 
 		if err == errNoActive {
 
-			wf.NewItem("No Active Calendars").
-				Subtitle("Action this item to choose calendars").
+			wf.NewItem("There no appropriate Active Calendars").
+				Subtitle("If you can't find activated calendars, delete these accounts and add them again, please").
 				Autocomplete("workflow:calendars").
 				Icon(aw.IconWarning)
 
@@ -258,6 +258,41 @@ func activeCalendars() ([]*Calendar, error) {
 
 	if all, err = allCalendars(); err != nil {
 		return nil, err
+	}
+
+	if len(all) == 0 {
+		return nil, errNoCalendars
+	}
+
+	for _, c := range all {
+		if IDs[c.ID] {
+			cals = append(cals, c)
+		}
+	}
+
+	if len(cals) == 0 {
+		return nil, errNoActive
+	}
+
+	return cals, nil
+}
+
+func writableCalendars() ([]*Calendar, error) {
+	var (
+		cals []*Calendar
+		all  []*Calendar
+		IDs  map[string]bool
+		err  error
+	)
+
+	if IDs, err = activeCalendarIDs(); err != nil {
+		return nil, err
+	}
+
+	for _, acc := range accounts {
+		if acc.ReadWrite {
+			all = append(all, acc.Calendars...)
+		}
 	}
 
 	if len(all) == 0 {

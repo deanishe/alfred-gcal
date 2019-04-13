@@ -29,6 +29,7 @@ type Account struct {
 	Name      string // Directory account data is stored in
 	Email     string // User's email address
 	AvatarURL string // URL of user's Google avatar
+	ReadWrite bool   // Define whether account has write permissions or not
 
 	Calendars []*Calendar // Calendars contained by account
 
@@ -77,7 +78,7 @@ func LoadAccounts() ([]*Account, error) {
 		if err := wf.Cache.LoadJSON(fi.Name(), acc); err != nil {
 			return nil, errors.Wrap(err, "load account")
 		}
-		log.Printf("[account] loaded %q", acc.Name)
+		log.Printf("[account] loaded %+v", acc)
 
 		accounts = append(accounts, acc)
 	}

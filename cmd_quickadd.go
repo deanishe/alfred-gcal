@@ -9,22 +9,11 @@
 package main
 
 import (
-	aw "github.com/deanishe/awgo"
 	"log"
 )
 
 // quickAdd check if there are configured accounts and pass data to create an event.
 func quickAdd() error {
-
-	if len(accounts) == 0 {
-		wf.NewItem("No Accounts Configured").
-			Subtitle("Action this item to add a Google account").
-			Autocomplete("workflow:login").
-			Icon(aw.IconWarning)
-
-		wf.SendFeedback()
-		return nil
-	}
 
 	log.Println("Creating event", opts.Quick, opts.CalendarID)
 

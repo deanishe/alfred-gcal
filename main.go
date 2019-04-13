@@ -243,7 +243,7 @@ func run() {
 	case opts.Create:
 		err = quickAdd()
 	case opts.Active:
-		err = doListActiveCalendars()
+		err = doListWritableCalendars()
 	}
 
 	if err != nil {
