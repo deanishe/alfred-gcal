@@ -41,6 +41,7 @@ Usage:
     gcal dates [--] [<format>]
     gcal events [--date=<date>] [--] [<query>]
     gcal calendars [<query>]
+    gcal active [<query>]
     gcal toggle <calID>
     gcal set <key> <value>
     gcal update (workflow|calendars|events) [<date>]
@@ -50,6 +51,7 @@ Usage:
     gcal open [--app=<app>] <url>
     gcal server
     gcal reload
+    gcal create <quick> <calID>
     gcal -h
 
 Options:
@@ -77,6 +79,7 @@ Options:
 type options struct {
 	// commands
 	Calendars bool
+	Active    bool
 	Clear     bool
 	Config    bool
 	Dates     bool
@@ -88,6 +91,7 @@ type options struct {
 	Set       bool
 	Toggle    bool
 	Update    bool
+	Create    bool
 
 	// sub-commands
 	Workflow bool
@@ -102,6 +106,7 @@ type options struct {
 	URL        string `docopt:"<url>"`
 	Key        string
 	Value      string
+	Quick      string `docopt:"<quick>"`
 
 	// options
 	UseAppleMaps   bool `env:"APPLE_MAPS"`
@@ -235,6 +240,10 @@ func run() {
 		err = doToggle()
 	case opts.Reload:
 		err = doReload()
+	case opts.Create:
+		err = quickAdd()
+	case opts.Active:
+		err = doListWritableCalendars()
 	}
 
 	if err != nil {

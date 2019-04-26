@@ -9,9 +9,11 @@
 package main
 
 import (
+	aw "github.com/deanishe/awgo"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -107,6 +109,80 @@ func doListCalendars() error {
 	return nil
 }
 
+// doListWritableCalendars shows a list of active calendars in Alfred.
+func doListWritableCalendars() error {
+
+	var (
+		cals []*Calendar
+		err  error
+	)
+
+	if cals, err = writableCalendars(); err != nil {
+
+		if err == errNoActive {
+
+			wf.NewItem("There no appropriate Active Calendars").
+				Subtitle("If you can't find activated calendars, delete these accounts and add them again, please").
+				Autocomplete("workflow:calendars").
+				Icon(aw.IconWarning)
+
+			wf.SendFeedback()
+
+			return nil
+		}
+
+		if err == errNoCalendars {
+
+			if !wf.IsRunning("update-calendars") {
+				cmd := exec.Command(os.Args[0], "update", "calendars")
+				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
+					return errors.Wrap(err, "run calendar update")
+				}
+			}
+
+			wf.NewItem("Fetching List of Calendars…").
+				Subtitle("List will reload shortly").
+				Valid(false).
+				Icon(ReloadIcon())
+
+			wf.Rerun(0.1)
+			wf.SendFeedback()
+
+			return nil
+		}
+
+		return err
+	}
+
+	for _, c := range cals {
+
+		title := c.Description + " / " + c.AccountName
+		if c.Description == "" {
+			title = c.AccountName
+		}
+
+		query := strings.Trim(opts.Query, " ")
+		sub := "Create '" + query + "' in " + c.Title
+		if query == "" {
+			sub = "Enter text to create event in " + c.Title
+		}
+
+		wf.NewItem(title).
+			Subtitle(sub).
+			Icon(iconCalOn).
+			Arg(c.ID).
+			Valid(true).
+			Var("action", "create").
+			Var("quick", opts.Query).
+			Var("calendar", c.ID)
+	}
+
+	wf.WarnEmpty("No Calendars", "Did you log in with the right account?")
+	wf.SendFeedback()
+
+	return nil
+}
+
 func allCalendars() ([]*Calendar, error) {
 	var (
 		jobName = "update-calendars"
@@ -182,6 +258,41 @@ func activeCalendars() ([]*Calendar, error) {
 
 	if all, err = allCalendars(); err != nil {
 		return nil, err
+	}
+
+	if len(all) == 0 {
+		return nil, errNoCalendars
+	}
+
+	for _, c := range all {
+		if IDs[c.ID] {
+			cals = append(cals, c)
+		}
+	}
+
+	if len(cals) == 0 {
+		return nil, errNoActive
+	}
+
+	return cals, nil
+}
+
+func writableCalendars() ([]*Calendar, error) {
+	var (
+		cals []*Calendar
+		all  []*Calendar
+		IDs  map[string]bool
+		err  error
+	)
+
+	if IDs, err = activeCalendarIDs(); err != nil {
+		return nil, err
+	}
+
+	for _, acc := range accounts {
+		if acc.ReadWrite {
+			all = append(all, acc.Calendars...)
+		}
 	}
 
 	if len(all) == 0 {

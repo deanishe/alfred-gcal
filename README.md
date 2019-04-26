@@ -43,6 +43,8 @@ You will also be prompted to activate some calendars (the workflow will show eve
     - `<query>` / `↩` / `⌘↩` / `⇧` / `⌘Y` — As above.
 - `gdate [<date>]` — Show one or more dates. See below for query format.
     - `↩` — Show events for the given day.
+- `gnew [<query>]` — Add a new event in the one of active calendars. (example: Some meeting at Office at 5pm with Ian)
+    - `↩` — Create event in selected calendar. 
 - `gcalconf [<query>]` — Show workflow configuration.
     - `Active Calendars…` — Turn calendars on/off.
         - `↩` — Toggle calendar on/off.

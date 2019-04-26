@@ -85,7 +85,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	a.state = fmt.Sprintf("%x", b)
 
 	ctx := context.Background()
-	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarReadonlyScope, userEmailScope)
+	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarScope, userEmailScope)
 	if err != nil {
 		return nil, errors.Wrap(err, "load config")
 	}
@@ -96,8 +96,8 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 			a.Failed = true
 			return nil, errors.Wrap(err, "token from web")
 		}
+		a.Account.ReadWrite = cfg.Scopes[0] == calendar.CalendarScope
 		save = true
-
 	}
 
 	a.client = cfg.Client(ctx, a.Account.Token)
@@ -205,7 +205,7 @@ func (a *Authenticator) getUserInfo() error {
 		return fmt.Errorf("read userinfo_endpoint response: %v", err)
 	}
 
-	// log.Printf("[auth] response=%s", string(data))
+	log.Printf("[auth] response=%s", string(data))
 
 	st := struct {
 		Email  string `json:"email"`

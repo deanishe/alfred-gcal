@@ -29,6 +29,7 @@ type Account struct {
 	Name      string // Directory account data is stored in
 	Email     string // User's email address
 	AvatarURL string // URL of user's Google avatar
+	ReadWrite bool   // Define whether account has write permissions or not
 
 	Calendars []*Calendar // Calendars contained by account
 
@@ -77,7 +78,7 @@ func LoadAccounts() ([]*Account, error) {
 		if err := wf.Cache.LoadJSON(fi.Name(), acc); err != nil {
 			return nil, errors.Wrap(err, "load account")
 		}
-		log.Printf("[account] loaded %q", acc.Name)
+		log.Printf("[account] loaded %+v", acc)
 
 		accounts = append(accounts, acc)
 	}
@@ -248,6 +249,25 @@ func (a *Account) FetchEvents(cal *Calendar, start time.Time) ([]*Event, error) 
 	}
 
 	return events, nil
+}
+
+// QuickAdd creates a new event in the passed calendar from Account.
+func (a *Account) QuickAdd(calendarID string, quick string) error {
+
+	var (
+		srv *calendar.Service
+		err error
+	)
+
+	if srv, err = a.Service(); err != nil {
+		return errors.Wrap(err, "create service")
+	}
+
+	if _, err = srv.Events.QuickAdd(calendarID, quick).Do(); err != nil {
+		return errors.Wrap(err, "create new event error")
+	}
+
+	return err
 }
 
 // Check for OAuth2 error and  remove tokens if they've expired/been revoked.
