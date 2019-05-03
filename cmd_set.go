@@ -24,10 +24,7 @@ func doSet() error {
 			value = "0"
 		}
 		return wf.Config.Set("APPLE_MAPS", value, true).Do()
-		return nil
 	default:
 		return fmt.Errorf("unknown config key: %s", opts.Key)
 	}
-
-	return nil
 }

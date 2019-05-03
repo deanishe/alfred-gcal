@@ -26,15 +26,21 @@ import (
 const (
 	timeFormat     = "2006-01-02"
 	timeFormatLong = "Monday, 2 January 2006"
-)
 
-var (
+	// Workflow icon colours
+	yellow = "f8ac30"
+	// green  = "03ae03"
+	// blue   = "5484f3"
+	// red    = "b00000"
+
+	// Workflow settings & URLs
 	repo      = "deanishe/alfred-gcal"
 	helpURL   = "https://github.com/deanishe/alfred-gcal/issues"
 	readmeURL = "https://github.com/deanishe/alfred-gcal/blob/master/README.md"
 	forumURL  = "https://www.alfredforum.com/topic/11016-google-calendar-view/"
+)
 
-	usage = `
+const usage = `
 gcal [<command>] [options] [<query>]
 
 Usage:
@@ -47,6 +53,7 @@ Usage:
     gcal update (workflow|calendars|events) [<date>]
     gcal config [<query>]
     gcal logout <account>
+    gcal reauth <account>
     gcal clear
     gcal open [--app=<app>] <url>
     gcal server
@@ -60,6 +67,8 @@ Options:
     -h --help          Show this message and exit.
     --version          Show workflow version and exit.
 `
+
+var (
 	wf       *aw.Workflow
 	accounts []*Account
 
@@ -67,12 +76,6 @@ Options:
 
 	// CLI args
 	opts *options
-
-	// Workflow icon colours
-	green  = "03ae03"
-	blue   = "5484f3"
-	red    = "b00000"
-	yellow = "f8ac30"
 )
 
 // CLI flags
@@ -85,6 +88,7 @@ type options struct {
 	Dates     bool
 	Events    bool
 	Logout    bool
+	Reauth    bool
 	Open      bool
 	Reload    bool
 	Server    bool
@@ -238,6 +242,8 @@ func run() {
 		err = doStartServer()
 	case opts.Toggle:
 		err = doToggle()
+	case opts.Reauth:
+		err = doReauth()
 	case opts.Reload:
 		err = doReload()
 	case opts.Create:

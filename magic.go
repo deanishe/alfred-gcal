@@ -21,13 +21,13 @@ func (cm *calendarMagic) Description() string { return "Activate/deactivate cale
 func (cm *calendarMagic) RunText() string     { return "Opening calendar list…" }
 func (cm *calendarMagic) Run() error          { return aw.NewAlfred().RunTrigger("calendars", "") }
 
-// magic action to log in to a new account
+// "magic" action to log in to a new account
 type loginMagic struct{}
 
-func (cm *loginMagic) Keyword() string     { return "login" }
-func (cm *loginMagic) Description() string { return "Add a Google account" }
-func (cm *loginMagic) RunText() string     { return "Opening Google signin page;" }
-func (cm *loginMagic) Run() error {
+func (lm *loginMagic) Keyword() string     { return "login" }
+func (lm *loginMagic) Description() string { return "Add a Google account" }
+func (lm *loginMagic) RunText() string     { return "Opening Google signin page…" }
+func (lm *loginMagic) Run() error {
 
 	acc, err := NewAccount("")
 	if err != nil {

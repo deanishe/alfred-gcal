@@ -29,11 +29,20 @@ type Account struct {
 	Name      string // Directory account data is stored in
 	Email     string // User's email address
 	AvatarURL string // URL of user's Google avatar
-	ReadWrite bool   // Define whether account has write permissions or not
 
-	Calendars []*Calendar // Calendars contained by account
+	// Whether account has write permissions.
+	// Early versions of the workflow only requested "read"
+	// permission from the Google Calendar API, and this flag
+	// is used to tell users to re-authenticate with the new
+	// read-write permissions if they try to use the
+	// "Add New Event" feature with an old, read-only access token.
+	ReadWrite bool
 
-	Token *oauth2.Token // OAuth2 authentication token
+	// Calendars contained by account
+	Calendars []*Calendar
+
+	// OAuth2
+	Token *oauth2.Token
 	auth  *Authenticator
 }
 

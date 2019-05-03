@@ -53,14 +53,19 @@ func doConfig() error {
 
 	for _, acc := range accounts {
 
-		wf.NewItem(acc.Name).
-			Subtitle("↩ to remove account").
+		it := wf.NewItem(acc.Name).
+			Subtitle("↩ to remove account / ⌘↩ to re-authenticate").
 			UID(acc.Name).
 			Arg(acc.Name).
 			Valid(true).
 			Icon(acc.Icon()).
 			Var("action", "logout").
 			Var("account", acc.Name)
+
+		it.NewModifier("cmd").
+		Subtitle("Re-authenticate account with read-write permission").
+		Var("action", "reauth").
+		Var("account", acc.Name)
 
 	}
 
@@ -172,6 +177,30 @@ func doToggle() error {
 
 	// calendars have changed, so delete cached schedules
 	return clearEvents()
+}
+
+
+// Re-authenticate specified account.
+func doReauth() error {
+	wf.Configure(aw.TextErrors(true))
+	log.Printf("[reauth] account=%q", opts.Account)
+
+	for _, acc := range accounts {
+
+		if acc.Name == opts.Account {
+			acc.Token = nil
+			if err := acc.Save(); err != nil {
+				return errors.Wrap(err, "reauth: save account")
+			}
+			
+			// retrieve calendar list to trigger authentication
+			if err := acc.FetchCalendars(); err != nil {
+				return errors.Wrap(err, "reauth: fetch calendars")
+			}
+		}
+	}
+
+	return nil
 }
 
 // doLogout removes an account.

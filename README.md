@@ -10,11 +10,13 @@ View Google Calendar events in [Alfred][alfred]. Supports multiple accounts.
 
 <!-- MarkdownTOC autolink="true" bracket="round" depth="3" autoanchor="true" -->
 
-- [Download & installation](#download--installation)
-- [Usage](#usage)
+- [Google Calendar for Alfred](#google-calendar-for-alfred)
+  - [Download & installation](#download--installation)
+  - [Usage](#usage)
     - [Date format](#date-format)
-- [Configuration](#configuration)
-- [Licensing & thanks](#licensing--thanks)
+    - [Add event format](#add-event-format)
+  - [Configuration](#configuration)
+  - [Licensing & thanks](#licensing--thanks)
 
 <!-- /MarkdownTOC -->
 
@@ -30,7 +32,7 @@ Grab the workflow from [GitHub releases][download]. Download the `Google-Calenda
 Usage
 -----
 
-When run, the workflow will open Google Calendar in your browser and ask for permission to read your calendars. If you do not grant permission, it won't work.
+When run, the workflow will open Google Calendar in your browser and ask for permission to access your calendars. If you do not grant permission, it won't work. The workflow requests permission to edit your calendars, as this is needed for the "Add New Event" feature (keyword `gnew`). It does not otherwise alter your calendars or events in any way.
 
 You will also be prompted to activate some calendars (the workflow will show events from these calendars). You can alter the active calendars or add/remove Google accounts in the settings using keyword `gcalconf`.
 
@@ -78,6 +80,16 @@ When viewing dates/events, you can specify and jump to a particular date using t
     - `-4w` for 4 weeks ago
 
 
+<a name="add-event-format"></a>
+### Add event format ###
+
+The "Add New Event" feature (keyword `gnew`) creates an event using Google Calendar's natural language syntax. This doesn't appear to be properly documented anywhere, but it is pretty powerful. You can specify event title, location, time & duration and repetition. Some examples:
+
+- `Wash pants` — creates an event titled "Wash pants" starting now using your default event duration
+- `Clean pants party tomorrow` — creates an all-day event for tomorrow title "Clean pants party"
+- `Drink beer every day 2000-2200` — creates an event titled "Drink beer" starting at 8pm, finishing at 10pm, and repeating every day.
+
+
 <a name="configuration"></a>
 Configuration
 -------------
@@ -103,6 +115,8 @@ It is heavily based on the [Google API libraries for Go][google-libs] ([BSD 3-cl
 
 The icons are from or based on [Font Awesome][awesome] and [Weather Icons][weather] (both [SIL][sil]).
 
+Special thanks to [@diffmike][diffmike] for adding the "Add New Event" feature.
+
 
 [gcal]: https://calendar.google.com/calendar/
 [google-libs]: https://github.com/google/google-api-go-client
@@ -117,4 +131,4 @@ The icons are from or based on [Font Awesome][awesome] and [Weather Icons][weath
 [mit]: https://opensource.org/licenses/MIT
 [awesome]: http://fortawesome.github.io/Font-Awesome/
 [weather]: https://erikflowers.github.io/weather-icons/
-
+[diffmike]: https://github.com/diffmike

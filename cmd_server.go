@@ -95,7 +95,9 @@ func doStartServer() error {
 		// Load events
 		t, err := time.Parse(timeFormat, dateStr)
 		if err != nil {
-			io.WriteString(w, "bad date\n")
+			if _, err := io.WriteString(w, "bad date\n"); err != nil {
+				log.Printf("[error] write server response: %v", err)
+			}
 			return
 		}
 		cals, err := activeCalendars()

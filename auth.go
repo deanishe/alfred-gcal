@@ -36,12 +36,6 @@ type response struct {
 	err  error
 }
 
-// UserInfo contains Google user email and picture.
-type UserInfo struct {
-	Email  string `json:"email"`   // User's email address
-	Avatar string `json:"picture"` // URL of avatar
-}
-
 // Authenticator creates an authenticated Google API client
 type Authenticator struct {
 	Secret  []byte
@@ -270,26 +264,34 @@ func (a *Authenticator) codeFromLocalServer() (string, error) {
 		// Verify state to prevent CSRF
 		if state != a.state {
 			c <- response{err: fmt.Errorf("state mismatch: expected=%s, got=%s", a.state, state)}
-			io.WriteString(w, "bad state\n")
+			if _, err := io.WriteString(w, "bad state\n"); err != nil {
+				log.Printf("[error] write server response: %v", err)
+			}
 			return
 		}
 
 		// authentication failed
 		if errMsg != "" {
 			c <- response{err: errors.New(errMsg)}
-			io.WriteString(w, errMsg+"\n")
+			if _, err := io.WriteString(w, errMsg+"\n"); err != nil {
+				log.Printf("[error] write server response: %v", err)
+			}
 			return
 		}
 
 		// user rejected
 		if code == "" {
 			c <- response{err: errors.New("user rejected access")}
-			io.WriteString(w, "access denied by user\n")
+			if _, err := io.WriteString(w, "access denied by user\n"); err != nil {
+				log.Printf("[error] write server response: %v", err)
+			}
 			return
 		}
 
 		c <- response{code: code}
-		io.WriteString(w, "ok\n")
+		if _, err := io.WriteString(w, "ok\n"); err != nil {
+			log.Printf("[error] write server response: %v", err)
+		}
 	})
 
 	r := <-c

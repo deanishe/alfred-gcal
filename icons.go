@@ -29,7 +29,6 @@ import (
 )
 
 var (
-	apiURL = "http://icons.deanishe.net/icon"
 	// Static icons
 	iconAccount         = &aw.Icon{Value: "icons/account.png"}
 	iconAccountAdd      = &aw.Icon{Value: "icons/account-add.png"}
@@ -53,25 +52,6 @@ var (
 	iconWarning         = &aw.Icon{Value: "icons/warning.png"}
 	iconAppleMaps       = &aw.Icon{Value: "/Applications/Maps.app", Type: aw.IconTypeFileIcon}
 	iconGoogleMaps      = &aw.Icon{Value: "icons/google-maps.png"}
-
-	// Font & name of dynamic icons
-	eventIconFont = "material"
-	eventIconName = "calendar"
-	mapIconFont   = "elusive"
-	mapIconName   = "map-marker"
-
-	// HTTP client
-	webClient = &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   60 * time.Second,
-				KeepAlive: 60 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   30 * time.Second,
-			ResponseHeaderTimeout: 30 * time.Second,
-			ExpectContinueTimeout: 10 * time.Second,
-		},
-	}
 )
 
 func init() {
@@ -107,26 +87,6 @@ func ColouredIcon(icon *aw.Icon, colour string) *aw.Icon {
 	return &aw.Icon{Value: path}
 }
 
-/*
-// WebIcon retrieves an image from a URL.
-func WebIcon(URL string, fallback *aw.Icon) *aw.Icon {
-	if fallback == nil {
-		fallback = iconDefault
-	}
-
-	name := fmt.Sprintf("%x%s", md5.Sum([]byte(URL)), filepath.Ext(URL))
-	p := filepath.Join(cacheDirIcons, name)
-
-	if !util.PathExists(p) {
-		if err := download(URL, p); err != nil {
-			log.Printf("[icons] ERR: %v", err)
-			return fallback
-		}
-	}
-
-	return &aw.Icon{Value: p}
-}
-*/
 
 var client = &http.Client{
 	Transport: &http.Transport{
@@ -140,6 +100,7 @@ var client = &http.Client{
 	},
 }
 
+// Save contents of URL to path.
 func download(URL, path string) error {
 
 	r, err := client.Get(URL)
@@ -148,7 +109,7 @@ func download(URL, path string) error {
 	}
 	defer r.Body.Close()
 
-	fmt.Printf("[%d] %s\n", r.StatusCode, URL)
+	log.Printf("[%d] %s", r.StatusCode, URL)
 	if r.StatusCode > 299 {
 		return fmt.Errorf("bad HTTP response: [%d] %s", r.StatusCode, URL)
 	}
@@ -167,6 +128,7 @@ func download(URL, path string) error {
 
 	return nil
 }
+
 
 func generateIcon(src, dest string, c color.RGBA) error {
 

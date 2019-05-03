@@ -21,6 +21,7 @@ import (
 var (
 	errNoActive    = errors.New("no active calendars")
 	errNoCalendars = errors.New("no calendars")
+	errNoWritable  = errors.New("no writeable calendars")
 )
 
 // doListCalendars shows a list of available calendars in Alfred.
@@ -119,12 +120,27 @@ func doListWritableCalendars() error {
 
 	if cals, err = writableCalendars(); err != nil {
 
+		if err == errNoWritable {
+
+			wf.NewItem("No Writeable Account(s)").
+				Subtitle("↩ to go to config and re-authenticate account with read-write permission").
+				Valid(true).
+				Icon(aw.IconWarning).
+				Var("action", "config")
+
+			wf.SendFeedback()
+
+			return nil
+		}
+
 		if err == errNoActive {
 
-			wf.NewItem("There no appropriate Active Calendars").
-				Subtitle("If you can't find activated calendars, delete these accounts and add them again, please").
+			wf.NewItem("No Active Calendars").
+				Subtitle("↩ or ⇥ to activate calendars").
 				Autocomplete("workflow:calendars").
 				Icon(aw.IconWarning)
+
+				// TODO: reauth accounts
 
 			wf.SendFeedback()
 
@@ -156,21 +172,20 @@ func doListWritableCalendars() error {
 
 	for _, c := range cals {
 
-		title := c.Description + " / " + c.AccountName
+		query := strings.TrimSpace(opts.Query)
+		sub := c.Description + " / " + c.AccountName
 		if c.Description == "" {
-			title = c.AccountName
+			sub = c.AccountName
+		}
+		if query != "" {
+			sub = "Create “" + query + "” in " + c.Title
 		}
 
-		query := strings.Trim(opts.Query, " ")
-		sub := "Create '" + query + "' in " + c.Title
-		if query == "" {
-			sub = "Enter text to create event in " + c.Title
-		}
-
-		wf.NewItem(title).
+		wf.NewItem(c.Title).
 			Subtitle(sub).
-			Icon(iconCalOn).
+			Icon(ColouredIcon(iconCalendar, c.Colour)).
 			Arg(c.ID).
+			UID(c.ID).
 			Valid(true).
 			Var("action", "create").
 			Var("quick", opts.Query).
@@ -281,6 +296,7 @@ func writableCalendars() ([]*Calendar, error) {
 	var (
 		cals []*Calendar
 		all  []*Calendar
+		writeable []*Calendar
 		IDs  map[string]bool
 		err  error
 	)
@@ -290,8 +306,9 @@ func writableCalendars() ([]*Calendar, error) {
 	}
 
 	for _, acc := range accounts {
+		all = append(all, acc.Calendars...)
 		if acc.ReadWrite {
-			all = append(all, acc.Calendars...)
+			writeable = append(writeable, acc.Calendars...)
 		}
 	}
 
@@ -299,7 +316,11 @@ func writableCalendars() ([]*Calendar, error) {
 		return nil, errNoCalendars
 	}
 
-	for _, c := range all {
+	if len(writeable) == 0 {
+		return nil, errNoWritable
+	}
+ 
+	for _, c := range writeable {
 		if IDs[c.ID] {
 			cals = append(cals, c)
 		}
