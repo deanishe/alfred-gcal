@@ -12,6 +12,6 @@ require (
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09
 	golang.org/x/oauth2 v0.0.0-20190115181402-5dab4167f31c
 	golang.org/x/text v0.3.2
-	google.golang.org/api v0.1.0
+	google.golang.org/api v0.6.0
 	howett.net/plist v0.0.0-20181124034731-591f970eefbb
 )
