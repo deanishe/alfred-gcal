@@ -13,6 +13,8 @@ github.com/deanishe/awgo v0.16.0-beta h1:9mAsfwkLh0hneB0hqaN2cL0XP/3e9FzhNQdLOr8
 github.com/deanishe/awgo v0.16.0-beta/go.mod h1:2a+ukSNkaIH6WWhuzH8f4yAOrODLct7bxaXaT6da9Gc=
 github.com/deanishe/awgo v0.16.2 h1:kl2LZcuHyb9ii1z4fg9pPRQa5kGguGDI+dy64hyOuDI=
 github.com/deanishe/awgo v0.16.2/go.mod h1:2a+ukSNkaIH6WWhuzH8f4yAOrODLct7bxaXaT6da9Gc=
+github.com/deanishe/awgo v0.20.1 h1:IiUlMfKUMtnOH5U0WULM2t2P0xoVpPHtV7L9MDgGOWY=
+github.com/deanishe/awgo v0.20.1/go.mod h1:2cRIRY+pgEcNHNAXzRyrrIiCpSHpvebc5dyDzeH5bV8=
 github.com/disintegration/imaging v1.5.0 h1:uYqUhwNmLU4K1FN44vhqS4TZJRAA4RhBINgbQlKyGi0=
 github.com/disintegration/imaging v1.5.0/go.mod h1:9B/deIUIrliYkyMTuXJd6OUFLcrZ2tf+3Qlwnaf/CjU=
 github.com/disintegration/imaging v1.6.0 h1:nVPXRUUQ36Z7MNf0O77UzgnOb1mkMMor7lmJMJXc/mA=
