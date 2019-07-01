@@ -2,7 +2,7 @@ module github.com/deanishe/alfred-gcal
 
 require (
 	git.deanishe.net/deanishe/alfred-goodreads v0.1.1 // indirect
-	github.com/bmatcuk/doublestar v1.1.1
+	github.com/bmatcuk/doublestar v1.1.2
 	github.com/deanishe/awgo v0.16.2
 	github.com/disintegration/imaging v1.6.0
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
