@@ -76,6 +76,9 @@ var (
 
 	// CLI args
 	opts *options
+
+	// display times using 24h clock
+	hourFormat = "15:04"
 )
 
 // CLI flags
@@ -116,6 +119,7 @@ type options struct {
 	UseAppleMaps   bool `env:"APPLE_MAPS"`
 	EventCacheMins int  `env:"EVENT_CACHE_MINS"`
 	ScheduleDays   int  `env:"SCHEDULE_DAYS"`
+	Use12HourTime  bool `env:"TIME_12H"`
 	ScheduleMode   bool
 	StartTime      time.Time
 	EndTime        time.Time
@@ -178,6 +182,10 @@ func parseFlags() error {
 			return err
 		}
 		opts.ScheduleMode = false
+	}
+
+	if opts.Use12HourTime {
+		hourFormat = "3:04"
 	}
 
 	opts.EndTime = opts.StartTime.Add(time.Hour * 24)

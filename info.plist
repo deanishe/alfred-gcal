@@ -2367,6 +2367,8 @@ Configuration
 		<string>15</string>
 		<key>SCHEDULE_DAYS</key>
 		<string>7</string>
+		<key>TIME_12H</key>
+		<string>0</string>
 	</dict>
 	<key>version</key>
 	<string>0.3.0</string>

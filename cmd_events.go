@@ -133,8 +133,8 @@ func doEvents() error {
 		icon := ColouredIcon(iconCalendar, e.Colour)
 
 		sub := fmt.Sprintf("%s – %s / %s",
-			e.Start.Local().Format("15:04"),
-			e.End.Local().Format("15:04"),
+			e.Start.Local().Format(hourFormat),
+			e.End.Local().Format(hourFormat),
 			e.CalendarTitle)
 
 		if e.Location != "" {
