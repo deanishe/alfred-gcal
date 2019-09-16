@@ -10,7 +10,7 @@ require (
 	github.com/google/pprof v0.0.0-20190723021845-34ac40c74b70 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/kr/pty v1.1.8 // indirect
-	github.com/magefile/mage v1.8.0
+	github.com/magefile/mage v1.9.0
 	github.com/pkg/errors v0.8.1
 	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586 // indirect
 	golang.org/x/image v0.0.0-20190823064033-3a9bac650e44 // indirect
