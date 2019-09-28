@@ -17,6 +17,7 @@ View Google Calendar events in [Alfred][alfred]. Supports multiple accounts.
     - [Add event format](#add-event-format)
   - [Configuration](#configuration)
   - [Licensing & thanks](#licensing--thanks)
+  - [Privacy](#privacy)
 
 <!-- /MarkdownTOC -->
 
@@ -46,7 +47,7 @@ You will also be prompted to activate some calendars (the workflow will show eve
 - `gdate [<date>]` — Show one or more dates. See below for query format.
     - `↩` — Show events for the given day.
 - `gnew [<query>]` — Add a new event in the one of active calendars. (example: Some meeting at Office at 5pm with Ian)
-    - `↩` — Create event in selected calendar. 
+    - `↩` — Create event in selected calendar.
 - `gcalconf [<query>]` — Show workflow configuration.
     - `Active Calendars…` — Turn calendars on/off.
         - `↩` — Toggle calendar on/off.
@@ -59,7 +60,7 @@ You will also be prompted to activate some calendars (the workflow will show eve
     - `Workflow is up to Date` / `An Update is Available` — Whether a newer version of the workflow is available.
         - `↩` — Check for or install update.
     - `Open Locations in XYZ` — Open locations in Google Maps or Apple Maps.
-    - `↩` — Toggle between applications. 
+    - `↩` — Toggle between applications.
     - `Open Documentation` — Open this page in your brower.
     - `Get Help` — Visit [the thread for this workflow][forumthread] on [AlfredForum.com][alfredforum].
     - `Report Issue` — [Open an issue][issues] on GitHub.
@@ -116,6 +117,13 @@ It is heavily based on the [Google API libraries for Go][google-libs] ([BSD 3-cl
 The icons are from or based on [Font Awesome][awesome] and [Weather Icons][weather] (both [SIL][sil]).
 
 Special thanks to [@diffmike][diffmike] for adding the "Add New Event" feature.
+
+
+<a name="privacy"></a>
+Privacy
+-------
+
+You data is cached locally on your machine. Nothing is shared with anyone (apart from Google, obviously).
 
 
 [gcal]: https://calendar.google.com/calendar/
