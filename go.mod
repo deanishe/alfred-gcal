@@ -20,7 +20,7 @@ require (
 	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
 	golang.org/x/text v0.3.2
 	golang.org/x/tools v0.0.0-20190823093517-aa644d2adf2a // indirect
-	google.golang.org/api v0.9.0
+	google.golang.org/api v0.11.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55 // indirect
 	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
