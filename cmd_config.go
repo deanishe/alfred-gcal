@@ -63,9 +63,9 @@ func doConfig() error {
 			Var("account", acc.Name)
 
 		it.NewModifier("cmd").
-		Subtitle("Re-authenticate account with read-write permission").
-		Var("action", "reauth").
-		Var("account", acc.Name)
+			Subtitle("Re-authenticate account with read-write permission").
+			Var("action", "reauth").
+			Var("account", acc.Name)
 
 	}
 
@@ -179,7 +179,6 @@ func doToggle() error {
 	return clearEvents()
 }
 
-
 // Re-authenticate specified account.
 func doReauth() error {
 	wf.Configure(aw.TextErrors(true))
@@ -192,7 +191,7 @@ func doReauth() error {
 			if err := acc.Save(); err != nil {
 				return errors.Wrap(err, "reauth: save account")
 			}
-			
+
 			// retrieve calendar list to trigger authentication
 			if err := acc.FetchCalendars(); err != nil {
 				return errors.Wrap(err, "reauth: fetch calendars")

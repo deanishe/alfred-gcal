@@ -294,11 +294,11 @@ func activeCalendars() ([]*Calendar, error) {
 
 func writableCalendars() ([]*Calendar, error) {
 	var (
-		cals []*Calendar
-		all  []*Calendar
+		cals      []*Calendar
+		all       []*Calendar
 		writeable []*Calendar
-		IDs  map[string]bool
-		err  error
+		IDs       map[string]bool
+		err       error
 	)
 
 	if IDs, err = activeCalendarIDs(); err != nil {
@@ -319,7 +319,7 @@ func writableCalendars() ([]*Calendar, error) {
 	if len(writeable) == 0 {
 		return nil, errNoWritable
 	}
- 
+
 	for _, c := range writeable {
 		if IDs[c.ID] {
 			cals = append(cals, c)

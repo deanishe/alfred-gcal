@@ -87,7 +87,6 @@ func ColouredIcon(icon *aw.Icon, colour string) *aw.Icon {
 	return &aw.Icon{Value: path}
 }
 
-
 var client = &http.Client{
 	Transport: &http.Transport{
 		Dial: (&net.Dialer{
@@ -128,7 +127,6 @@ func download(URL, path string) error {
 
 	return nil
 }
-
 
 func generateIcon(src, dest string, c color.RGBA) error {
 

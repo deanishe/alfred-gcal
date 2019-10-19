@@ -148,8 +148,7 @@ func init() {
 	opts = &options{}
 
 	wf = aw.New(update.GitHub(repo), aw.HelpURL(helpURL))
-	wf.MagicActions.Register(&calendarMagic{})
-	wf.MagicActions.Register(&loginMagic{})
+	wf.Configure(aw.AddMagic(&calendarMagic{}, &loginMagic{}))
 
 	cacheDirIcons = filepath.Join(wf.CacheDir(), "icons")
 }
