@@ -14,7 +14,6 @@ import (
 
 // quickAdd check if there are configured accounts and pass data to create an event.
 func quickAdd() error {
-
 	log.Println("Creating event", opts.Quick, opts.CalendarID)
 
 	if err := createEvent(opts.Quick, opts.CalendarID); err != nil {
@@ -30,7 +29,6 @@ func quickAdd() error {
 
 // createEvent looks for account by calendar ID and create new event in that account.
 func createEvent(quick string, calendarID string) error {
-
 	for _, acc := range accounts {
 		for _, c := range acc.Calendars {
 			if c.ID == calendarID {

@@ -9,12 +9,12 @@
 package main
 
 import (
-	aw "github.com/deanishe/awgo"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 
+	aw "github.com/deanishe/awgo"
 	"github.com/pkg/errors"
 )
 
@@ -26,16 +26,13 @@ var (
 
 // doListCalendars shows a list of available calendars in Alfred.
 func doListCalendars() error {
-
 	var (
 		cals []*Calendar
 		err  error
 	)
 
 	if cals, err = allCalendars(); err != nil {
-
 		if err == errNoCalendars {
-
 			if !wf.IsRunning("update-calendars") {
 				cmd := exec.Command(os.Args[0], "update", "calendars")
 				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
@@ -73,7 +70,6 @@ func doListCalendars() error {
 	}
 
 	for _, c := range cals {
-
 		on := active[c.ID]
 		icon := iconCalOff
 		if on {
@@ -112,16 +108,13 @@ func doListCalendars() error {
 
 // doListWritableCalendars shows a list of active calendars in Alfred.
 func doListWritableCalendars() error {
-
 	var (
 		cals []*Calendar
 		err  error
 	)
 
 	if cals, err = writableCalendars(); err != nil {
-
 		if err == errNoWritable {
-
 			wf.NewItem("No Writeable Account(s)").
 				Subtitle("↩ to go to config and re-authenticate account with read-write permission").
 				Valid(true).
@@ -134,7 +127,6 @@ func doListWritableCalendars() error {
 		}
 
 		if err == errNoActive {
-
 			wf.NewItem("No Active Calendars").
 				Subtitle("↩ or ⇥ to activate calendars").
 				Autocomplete("workflow:calendars").
@@ -148,7 +140,6 @@ func doListWritableCalendars() error {
 		}
 
 		if err == errNoCalendars {
-
 			if !wf.IsRunning("update-calendars") {
 				cmd := exec.Command(os.Args[0], "update", "calendars")
 				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
@@ -171,7 +162,6 @@ func doListWritableCalendars() error {
 	}
 
 	for _, c := range cals {
-
 		query := strings.TrimSpace(opts.Query)
 		sub := c.Description + " / " + c.AccountName
 		if c.Description == "" {
@@ -213,9 +203,7 @@ func allCalendars() ([]*Calendar, error) {
 	}
 
 	if expired {
-
 		if !wf.IsRunning(jobName) {
-
 			wf.Rerun(0.1)
 
 			cmd := exec.Command(os.Args[0], "update", "calendars")

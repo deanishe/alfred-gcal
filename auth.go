@@ -57,7 +57,6 @@ func NewAuthenticator(acc *Account, secret []byte) *Authenticator {
 
 // GetClient returns an authenticated Google API client
 func (a *Authenticator) GetClient() (*http.Client, error) {
-
 	a.mu.Lock()
 	defer a.mu.Unlock()
 
@@ -139,7 +138,6 @@ func (a *Authenticator) saveToken(tok *oauth2.Token) error {
 
 // tokenFromWeb initiates web-based authentication and retrieves the oauth2 token
 func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) error {
-
 	var (
 		code  string
 		token *oauth2.Token
@@ -154,7 +152,7 @@ func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) error {
 		return errors.Wrap(err, "get token from local server")
 	}
 
-	if token, err = cfg.Exchange(oauth2.NoContext, code); err != nil {
+	if token, err = cfg.Exchange(context.Background(), code); err != nil {
 		return errors.Wrap(err, "token from web")
 	}
 
@@ -164,7 +162,6 @@ func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) error {
 }
 
 func (a *Authenticator) getUserInfo() error {
-
 	var (
 		resp *http.Response
 		data []byte
@@ -235,7 +232,6 @@ func (a *Authenticator) openAuthURL(cfg *oauth2.Config) error {
 // codeFromLocalServer starts a local webserver to receive the oauth2 token
 // from Google
 func (a *Authenticator) codeFromLocalServer() (string, error) {
-
 	var (
 		c   = make(chan response)
 		mux = http.NewServeMux()

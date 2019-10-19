@@ -25,7 +25,6 @@ import (
 
 // Check if a new version of the workflow is available.
 func doUpdateWorkflow() error {
-
 	wf.Configure(aw.TextErrors(true))
 
 	log.Print("[update] checking for new version of workflow…")
@@ -35,7 +34,6 @@ func doUpdateWorkflow() error {
 
 // Fetch and cache list of calendars.
 func doUpdateCalendars() error {
-
 	var (
 		acc *Account
 		err error
@@ -50,7 +48,6 @@ func doUpdateCalendars() error {
 	}
 
 	for _, acc = range accounts {
-
 		if err = acc.FetchCalendars(); err != nil {
 			return err
 		}
@@ -63,7 +60,6 @@ func doUpdateCalendars() error {
 
 // Fetch events for a specified date.
 func doUpdateEvents() error {
-
 	wf.Configure(aw.TextErrors(true))
 
 	var (
@@ -109,15 +105,12 @@ func doUpdateEvents() error {
 	wg.Add(len(cals))
 
 	for _, acc := range accounts {
-
 		for _, c := range acc.Calendars {
-
 			if _, ok := wanted[c.ID]; !ok {
 				continue
 			}
 
 			go func(c *Calendar, acc *Account) {
-
 				defer wg.Done()
 
 				evs, err := acc.FetchEvents(c, opts.StartTime)
@@ -165,15 +158,12 @@ func doUpdateEvents() error {
 
 // Remove events-* files and icons older than two weeks.
 func clearOldFiles() error {
-
 	var (
 		cutoff = time.Now().AddDate(0, 0, -14)
 		dirs   = []string{}
-		err    error
 	)
 
-	err = filepath.Walk(wf.CacheDir(), func(path string, fi os.FileInfo, err error) error {
-
+	err := filepath.Walk(wf.CacheDir(), func(path string, fi os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -194,7 +184,6 @@ func clearOldFiles() error {
 		ext := filepath.Ext(path)
 
 		if (strings.HasPrefix(fi.Name(), "events-") && ext == ".json") || ext == ".png" {
-
 			if err := os.Remove(path); err != nil {
 				log.Printf("[cache] ERR: delete %q: %v", path, err)
 				return err
@@ -214,7 +203,6 @@ func clearOldFiles() error {
 
 Outer:
 	for _, dir := range dirs {
-
 		infos, err := ioutil.ReadDir(dir)
 		if err != nil {
 			log.Printf("[cache] ERR: open dir %s: %v", dir, err)

@@ -144,7 +144,6 @@ func (opts *options) ScheduleDuration() time.Duration {
 }
 
 func init() {
-
 	opts = &options{}
 
 	wf = aw.New(update.GitHub(repo), aw.HelpURL(helpURL))
@@ -155,7 +154,6 @@ func init() {
 
 // Parse command-line flags.
 func parseFlags() error {
-
 	args, err := docopt.ParseArgs(usage, wf.Args(), wf.Version())
 	if err != nil {
 		return errors.Wrap(err, "docopt parse")

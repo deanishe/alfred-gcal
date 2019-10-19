@@ -29,7 +29,6 @@ var (
 
 // doDates shows a list of dates in Alfred.
 func doDates() error {
-
 	if len(accounts) == 0 {
 		wf.NewItem("No Accounts Configured").
 			Subtitle("Action this item to add a Google account").
@@ -43,7 +42,6 @@ func doDates() error {
 	var parsed bool
 
 	if t, ok := parseDate(opts.DateFormat); ok {
-
 		parsed = true
 
 		short := t.Format(timeFormat)
@@ -55,10 +53,8 @@ func doDates() error {
 			Autocomplete(short).
 			Valid(true).
 			Icon(iconDefault)
-
 	} else {
 		for i := -3; i < 4; i++ {
-
 			var (
 				t     = midnight(today.Add(oneDay * time.Duration(i)))
 				long  = t.Format(timeFormatLong)
@@ -77,7 +73,6 @@ func doDates() error {
 				Autocomplete(short).
 				Valid(true).
 				Icon(icon)
-
 		}
 	}
 
@@ -103,7 +98,6 @@ func midnight(t time.Time) time.Time {
 
 // parse string into Time. Boolean is true if parsing was successful.
 func parseDate(s string) (time.Time, bool) {
-
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return time.Time{}, false

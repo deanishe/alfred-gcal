@@ -19,8 +19,10 @@ import (
 	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/util"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
 )
 
 // Account is a Google account. It contains user's email, avatar URL and OAuth2
@@ -48,7 +50,6 @@ type Account struct {
 
 // NewAccount creates a new account or loads an existing one.
 func NewAccount(name string) (*Account, error) {
-
 	var (
 		a   = &Account{Name: name}
 		err error
@@ -65,7 +66,6 @@ func NewAccount(name string) (*Account, error) {
 
 // LoadAccounts reads saved accounts from disk.
 func LoadAccounts() ([]*Account, error) {
-
 	var (
 		accounts = []*Account{}
 		infos    []os.FileInfo
@@ -133,7 +133,6 @@ func (a *Account) Save() error {
 
 // Service returns a Calendar Service for this Account.
 func (a *Account) Service() (*calendar.Service, error) {
-
 	var (
 		client *http.Client
 		srv    *calendar.Service
@@ -144,7 +143,7 @@ func (a *Account) Service() (*calendar.Service, error) {
 		return nil, errors.Wrap(err, "get authenticator client")
 	}
 
-	if srv, err = calendar.New(client); err != nil {
+	if srv, err = calendar.NewService(context.Background(), option.WithHTTPClient(client)); err != nil {
 		return nil, errors.Wrap(err, "create new calendar client")
 	}
 
@@ -153,7 +152,6 @@ func (a *Account) Service() (*calendar.Service, error) {
 
 // FetchCalendars retrieves a list of all calendars in Account.
 func (a *Account) FetchCalendars() error {
-
 	var (
 		srv  *calendar.Service
 		ls   *calendar.CalendarList
@@ -195,7 +193,6 @@ func (a *Account) FetchCalendars() error {
 
 // FetchEvents returns events from the specified calendar.
 func (a *Account) FetchEvents(cal *Calendar, start time.Time) ([]*Event, error) {
-
 	var (
 		end       = start.Add(opts.ScheduleDuration())
 		events    = []*Event{}
@@ -262,7 +259,6 @@ func (a *Account) FetchEvents(cal *Calendar, start time.Time) ([]*Event, error) 
 
 // QuickAdd creates a new event in the passed calendar from Account.
 func (a *Account) QuickAdd(calendarID string, quick string) error {
-
 	var (
 		srv *calendar.Service
 		err error
@@ -281,13 +277,10 @@ func (a *Account) QuickAdd(calendarID string, quick string) error {
 
 // Check for OAuth2 error and  remove tokens if they've expired/been revoked.
 func (a *Account) handleAPIError(err error) error {
-
 	if err2, ok := err.(*url.Error); ok {
-
 		if err3, ok := err2.Err.(*oauth2.RetrieveError); ok {
 			var resp errorResponse
-			if err4 := json.Unmarshal([]byte(err3.Body), &resp); err4 == nil {
-
+			if err4 := json.Unmarshal(err3.Body, &resp); err4 == nil {
 				log.Printf("[events] ERR: OAuth: %s (%s)", resp.Name, resp.Description)
 
 				err := errorAuthentication{
@@ -297,7 +290,6 @@ func (a *Account) handleAPIError(err error) error {
 				}
 
 				if err.Name == "invalid_grant" {
-
 					log.Printf("[account] clearing invalid token for %q", a.Name)
 
 					a.Token = nil

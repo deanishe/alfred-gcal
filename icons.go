@@ -61,7 +61,6 @@ func init() {
 // ColouredIcon returns a version of icon in the given colour. If no colour
 // is specified or something goes wrong, icon is simply returned.
 func ColouredIcon(icon *aw.Icon, colour string) *aw.Icon {
-
 	var (
 		c    color.RGBA
 		path string
@@ -100,17 +99,16 @@ var client = &http.Client{
 }
 
 // Save contents of URL to path.
-func download(URL, path string) error {
-
-	r, err := client.Get(URL)
+func download(url, path string) error {
+	r, err := client.Get(url)
 	if err != nil {
 		return err
 	}
 	defer r.Body.Close()
 
-	log.Printf("[%d] %s", r.StatusCode, URL)
+	log.Printf("[%d] %s", r.StatusCode, url)
 	if r.StatusCode > 299 {
-		return fmt.Errorf("bad HTTP response: [%d] %s", r.StatusCode, URL)
+		return fmt.Errorf("bad HTTP response: [%d] %s", r.StatusCode, url)
 	}
 
 	f, err := os.Create(path)
@@ -123,13 +121,12 @@ func download(URL, path string) error {
 		return err
 	}
 
-	log.Printf("[icons] saved %q to %q\n", URL, path)
+	log.Printf("[icons] saved %q to %q\n", url, path)
 
 	return nil
 }
 
 func generateIcon(src, dest string, c color.RGBA) error {
-
 	// defer util.Timed(time.Now(), "generate icon")
 
 	var (
@@ -148,7 +145,7 @@ func generateIcon(src, dest string, c color.RGBA) error {
 	}
 
 	img := image.NewRGBA(mask.Bounds())
-	draw.DrawMask(img, img.Bounds(), &image.Uniform{c}, image.ZP, mask, image.ZP, draw.Src)
+	draw.DrawMask(img, img.Bounds(), &image.Uniform{c}, image.Point{}, mask, image.Point{}, draw.Src)
 
 	if f, err = os.Create(dest); err != nil {
 		return errors.Wrap(err, "create file")
@@ -167,7 +164,7 @@ func generateIcon(src, dest string, c color.RGBA) error {
 
 func iconCachePath(i *aw.Icon, c color.RGBA) string {
 	name := filepath.Base(i.Value)
-	dir := fmt.Sprintf("%02X/%02X/%02X/%02X", uint8(c.R), uint8(c.G), uint8(c.B), uint8(c.A))
+	dir := fmt.Sprintf("%02X/%02X/%02X/%02X", c.R, c.G, c.B, c.A)
 	dir = filepath.Join(cacheDirIcons, dir)
 
 	util.MustExist(dir)
@@ -179,7 +176,6 @@ func iconCachePath(i *aw.Icon, c color.RGBA) string {
 //
 // Input must be with preceding # and have 6 (RGB) or 8 (RGBA) characters.
 func ParseHexColour(s string) (color.RGBA, error) {
-
 	var (
 		// default to 100% opaque
 		c   = color.RGBA{A: 0xff}

@@ -30,8 +30,11 @@ enable = [
 [issues]
   max-same-issues = 50
   max-issues-per-linter = 50
-  # exclude = ['ST1005']
+  exclude = [
+    # scoplint chokes on filepath.Walk
+    "Using the variable on range scope .* in function literal",
+    # gocritic chokes on if t.Before(today) {
+    "ifElseChain:",
+  ]
 
-  [[issues.exclude-rules]]
-  linters = ['stylecheck']
-  text = "ST1005:"
+# vim: set ft=toml ts=4 sw=4 tw=0 et :

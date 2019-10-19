@@ -21,7 +21,6 @@ import (
 
 // doEvents shows a list of events in Alfred.
 func doEvents() error {
-
 	if len(accounts) == 0 {
 		wf.NewItem("No Accounts Configured").
 			Subtitle("Action this item to add a Google account").
@@ -38,9 +37,7 @@ func doEvents() error {
 	)
 
 	if cals, err = activeCalendars(); err != nil {
-
 		if err == errNoActive {
-
 			wf.NewItem("No Active Calendars").
 				Subtitle("Action this item to choose calendars").
 				Autocomplete("workflow:calendars").
@@ -52,7 +49,6 @@ func doEvents() error {
 		}
 
 		if err == errNoCalendars {
-
 			if !wf.IsRunning("update-calendars") {
 				cmd := exec.Command(os.Args[0], "update", "calendars")
 				if err := wf.RunInBackground("update-calendars", cmd); err != nil {
@@ -118,10 +114,8 @@ func doEvents() error {
 	var day time.Time
 
 	for _, e := range events {
-
 		// Show day indicator if this is the first event of a given day
 		if opts.ScheduleMode && midnight(e.Start).After(day) {
-
 			day = midnight(e.Start)
 
 			wf.NewItem(day.Format(timeFormatLong)).
@@ -187,7 +181,6 @@ func doEvents() error {
 	}
 
 	if !parsed.IsZero() {
-
 		s := parsed.Format(timeFormat)
 
 		wf.NewItem(parsed.Format(timeFormatLong)).

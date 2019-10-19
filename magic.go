@@ -28,7 +28,6 @@ func (lm *loginMagic) Keyword() string     { return "login" }
 func (lm *loginMagic) Description() string { return "Add a Google account" }
 func (lm *loginMagic) RunText() string     { return "Opening Google signin page…" }
 func (lm *loginMagic) Run() error {
-
 	acc, err := NewAccount("")
 	if err != nil {
 		return errors.Wrap(err, "magic: new account")

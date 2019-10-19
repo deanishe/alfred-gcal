@@ -12,7 +12,6 @@ import (
 
 // Change a setting.
 func doSet() error {
-
 	wf.Configure(aw.TextErrors(true))
 
 	log.Printf("[set] key=%q, value=%q", opts.Key, opts.Value)

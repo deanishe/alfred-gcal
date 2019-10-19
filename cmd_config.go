@@ -28,7 +28,6 @@ func doConfig() error {
 	}
 
 	if len(accounts) > 0 {
-
 		wf.NewItem("Active Calendars…").
 			Subtitle("Turn calendars on/off").
 			UID("calendars").
@@ -41,9 +40,7 @@ func doConfig() error {
 			UID("add-account").
 			Autocomplete("workflow:login").
 			Icon(iconAccountAdd)
-
 	} else {
-
 		wf.NewItem("No Accounts Configured").
 			Subtitle("Action this item to add a Google account").
 			UID("add-account").
@@ -52,7 +49,6 @@ func doConfig() error {
 	}
 
 	for _, acc := range accounts {
-
 		it := wf.NewItem(acc.Name).
 			Subtitle("↩ to remove account / ⌘↩ to re-authenticate").
 			UID(acc.Name).
@@ -66,7 +62,6 @@ func doConfig() error {
 			Subtitle("Re-authenticate account with read-write permission").
 			Var("action", "reauth").
 			Var("account", acc.Name)
-
 	}
 
 	var (
@@ -185,7 +180,6 @@ func doReauth() error {
 	log.Printf("[reauth] account=%q", opts.Account)
 
 	for _, acc := range accounts {
-
 		if acc.Name == opts.Account {
 			acc.Token = nil
 			if err := acc.Save(); err != nil {
@@ -204,7 +198,6 @@ func doReauth() error {
 
 // doLogout removes an account.
 func doLogout() error {
-
 	wf.Configure(aw.TextErrors(true))
 
 	log.Printf("[logout] account=%q", opts.Account)
@@ -212,9 +205,7 @@ func doLogout() error {
 	deleteMe := map[string]bool{}
 
 	for _, acc := range accounts {
-
 		if acc.Name == opts.Account {
-
 			for _, cal := range acc.Calendars {
 				deleteMe[cal.ID] = true
 			}
@@ -281,7 +272,6 @@ func doClear() error {
 
 // delete cached events.
 func clearEvents() error {
-
 	var (
 		infos []os.FileInfo
 		err   error
