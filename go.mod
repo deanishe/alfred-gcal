@@ -21,7 +21,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20191018095205-727590c5006e // indirect
 	golang.org/x/text v0.3.2
-	google.golang.org/api v0.11.0
+	google.golang.org/api v0.13.0
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/grpc v1.24.0 // indirect
 	howett.net/plist v0.0.0-20181124034731-591f970eefbb
