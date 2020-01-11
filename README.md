@@ -1,6 +1,6 @@
 
 <div align="center">
-    <img height="128" width="128" src="./icons/icon.png">
+    <img height="128" width="128" src="https://raw.githubusercontent.com/deanishe/alfred-gcal/master/icons/icon.png">
 </div>
 
 Google Calendar for Alfred
@@ -123,8 +123,7 @@ Special thanks to [@diffmike][diffmike] for adding the "Add New Event" feature.
 Privacy
 -------
 
-You data is cached locally on your machine. Nothing is shared with anyone (apart from Google, obviously).
-
+The data used and accessed by this workflow are stored exclusively on your own Mac. Nothing is shared with anyone. When you authorise this workflow to access your Google Calendars, the only person you are enabling to read that data is you.
 
 [gcal]: https://calendar.google.com/calendar/
 [google-libs]: https://github.com/google/google-api-go-client

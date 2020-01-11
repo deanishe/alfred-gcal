@@ -26,6 +26,7 @@ var (
 	info     *build.Info
 	buildDir = "./build"
 	distDir  = "./dist"
+	env      map[string]string
 )
 
 func init() {
@@ -33,6 +34,8 @@ func init() {
 	if info, err = build.NewInfo(); err != nil {
 		panic(err)
 	}
+	env = info.Env()
+	env["TAGS"] = "private"
 }
 
 func mod(args ...string) error {
@@ -54,9 +57,7 @@ func Build() error {
 	// mg.Deps(Deps)
 	fmt.Println("building ...")
 
-	if err := sh.RunWith(info.Env(),
-		"go", "build", "-tags", "$TAGS", "-o", buildDir+"/gcal", ".",
-	); err != nil {
+	if err := sh.RunWith(env, "go", "build", "-tags", "$TAGS", "-o", buildDir+"/gcal", "."); err != nil {
 		return err
 	}
 
