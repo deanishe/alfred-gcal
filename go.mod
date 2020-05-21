@@ -2,12 +2,12 @@ module github.com/deanishe/alfred-gcal
 
 require (
 	cloud.google.com/go v0.51.0 // indirect
-	github.com/bmatcuk/doublestar v1.2.2
-	github.com/deanishe/awgo v0.22.0
+	github.com/bmatcuk/doublestar v1.3.0
+	github.com/deanishe/awgo v0.23.1
 	github.com/disintegration/imaging v1.6.2
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/magefile/mage v1.9.0
-	github.com/pkg/errors v0.8.1
+	github.com/pkg/errors v0.9.1
 	golang.org/x/image v0.0.0-20191214001246-9130b4cfad52 // indirect
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
