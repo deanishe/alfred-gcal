@@ -2,7 +2,7 @@ module github.com/deanishe/alfred-gcal
 
 require (
 	cloud.google.com/go v0.51.0 // indirect
-	github.com/bmatcuk/doublestar v1.2.2
+	github.com/bmatcuk/doublestar v1.3.1
 	github.com/deanishe/awgo v0.22.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
