@@ -6,7 +6,7 @@ require (
 	github.com/deanishe/awgo v0.22.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
-	github.com/magefile/mage v1.9.0
+	github.com/magefile/mage v1.10.0
 	github.com/pkg/errors v0.8.1
 	golang.org/x/image v0.0.0-20191214001246-9130b4cfad52 // indirect
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
