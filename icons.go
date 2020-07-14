@@ -56,6 +56,10 @@ var (
 
 func init() {
 	aw.IconWarning = iconWarning
+	// Maps.app has moved on Catalina
+	if util.PathExists("/System/Applications/Maps.app") {
+		iconAppleMaps.Value = "/System/Applications/Maps.app"
+	}
 }
 
 // ColouredIcon returns a version of icon in the given colour. If no colour

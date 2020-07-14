@@ -27,9 +27,14 @@ import (
 )
 
 const (
-	authServerURL  = "localhost:61432"
+	// URL of local server that receives OAuth2 tokens
+	authServerURL = "localhost:61432"
+	// OAuth2 scope for user's email address
 	userEmailScope = "https://www.googleapis.com/auth/userinfo.email"
 )
+
+// OAuth2 scopes used by the workflow
+var scopes = []string{calendar.CalendarEventsScope, calendar.CalendarReadonlyScope, userEmailScope}
 
 type response struct {
 	code string
@@ -78,7 +83,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 	a.state = fmt.Sprintf("%x", b)
 
 	ctx := context.Background()
-	cfg, err := google.ConfigFromJSON(a.Secret, calendar.CalendarScope, userEmailScope)
+	cfg, err := google.ConfigFromJSON(a.Secret, scopes...)
 	if err != nil {
 		return nil, errors.Wrap(err, "load config")
 	}
@@ -89,7 +94,7 @@ func (a *Authenticator) GetClient() (*http.Client, error) {
 			a.Failed = true
 			return nil, errors.Wrap(err, "token from web")
 		}
-		a.Account.ReadWrite = cfg.Scopes[0] == calendar.CalendarScope
+		a.Account.ReadWrite = cfg.Scopes[0] == calendar.CalendarEventsScope
 		save = true
 	}
 
@@ -136,7 +141,7 @@ func (a *Authenticator) saveToken(tok *oauth2.Token) error {
 }
 */
 
-// tokenFromWeb initiates web-based authentication and retrieves the oauth2 token
+// tokenFromWeb initiates web-based authentication and retrieves the OAuth2 token
 func (a *Authenticator) tokenFromWeb(cfg *oauth2.Config) error {
 	var (
 		code  string

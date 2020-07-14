@@ -50,16 +50,21 @@ func doConfig() error {
 
 	for _, acc := range accounts {
 		it := wf.NewItem(acc.Name).
-			Subtitle("↩ to remove account / ⌘↩ to re-authenticate").
+			Subtitle("⌥↩ to remove account / ⌘↩ to re-authenticate").
 			UID(acc.Name).
 			Arg(acc.Name).
+			Valid(false).
+			Icon(acc.Icon())
+
+		it.NewModifier("opt").
+			Subtitle("Remove account").
 			Valid(true).
-			Icon(acc.Icon()).
 			Var("action", "logout").
 			Var("account", acc.Name)
 
 		it.NewModifier("cmd").
 			Subtitle("Re-authenticate account with read-write permission").
+			Valid(true).
 			Var("action", "reauth").
 			Var("account", acc.Name)
 	}

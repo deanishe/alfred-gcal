@@ -21,6 +21,7 @@ import (
 
 	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/util"
+	"github.com/pkg/errors"
 )
 
 // Check if a new version of the workflow is available.
@@ -50,6 +51,12 @@ func doUpdateCalendars() error {
 	for _, acc = range accounts {
 		if err = acc.FetchCalendars(); err != nil {
 			return err
+		}
+
+		if !util.PathExists(acc.IconPath()) {
+			if err := download(acc.AvatarURL, acc.IconPath()); err != nil {
+				return errors.Wrap(err, "fetch account avatar")
+			}
 		}
 
 		log.Printf("[update] %d calendar(s) in account %q", len(acc.Calendars), acc.Name)

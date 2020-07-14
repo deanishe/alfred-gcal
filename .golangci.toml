@@ -31,7 +31,7 @@ enable = [
   max-same-issues = 50
   max-issues-per-linter = 50
   exclude = [
-    # scoplint chokes on filepath.Walk
+    # scopelint chokes on filepath.Walk
     "Using the variable on range scope .* in function literal",
     # gocritic chokes on if t.Before(today) {
     "ifElseChain:",
