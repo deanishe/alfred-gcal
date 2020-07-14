@@ -28,6 +28,11 @@ func (lm *loginMagic) Keyword() string     { return "login" }
 func (lm *loginMagic) Description() string { return "Add a Google account" }
 func (lm *loginMagic) RunText() string     { return "Opening Google signin page…" }
 func (lm *loginMagic) Run() error {
+	wf := aw.New()
+	if err := wf.Alfred.RunTrigger("close", ""); err != nil {
+		return errors.Wrap(err, "close Alfred")
+	}
+
 	acc, err := NewAccount("")
 	if err != nil {
 		return errors.Wrap(err, "magic: new account")
@@ -38,5 +43,10 @@ func (lm *loginMagic) Run() error {
 	}
 
 	// clear cached schedules now calendars have changed
-	return clearEvents()
+	if err := clearEvents(); err != nil {
+		return errors.Wrap(err, "clear cached events")
+	}
+
+	// re-open workflow configuration
+	return wf.Alfred.RunTrigger("config", "")
 }

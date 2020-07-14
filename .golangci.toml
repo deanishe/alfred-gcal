@@ -24,9 +24,6 @@ enable = [
   check-blank = true
   check-type-assertions = true
 
-  [linter-settings.goimports]
-  local-prefixes = "github.com/deanishe/awgo"
-
 [issues]
   max-same-issues = 50
   max-issues-per-linter = 50
