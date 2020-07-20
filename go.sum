@@ -50,6 +50,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/deanishe/awgo v0.24.1 h1:yLQuT7dMlV986b87o8u4ank2tPIIRMh4Ff+2KRbZk8s=
 github.com/deanishe/awgo v0.24.1/go.mod h1:M2gP2LpidyU4vpy5E6/eztFnrECIWTO2eQ8LF1u2he4=
+github.com/deanishe/awgo v0.25.0 h1:r6/eJFETRB6Zex10XbjixSASGlc2a484b+FgRRAYY9g=
+github.com/deanishe/awgo v0.25.0/go.mod h1:reRZEwXsMuJISYxmdqkn24KrHN+WV/ZQzRBXTtKDPHY=
 github.com/deanishe/go-env v0.4.0 h1:tpu14o16gJGTN/w2gxntwxu2l5Eby30jSrnlgOfjzwk=
 github.com/deanishe/go-env v0.4.0/go.mod h1:RgEcGAqdRnt8ybQteAbv1Ys2lWIRE7TlgON/sbdjuaY=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815 h1:bWDMxwH3px2JBh6AyO7hdCn/PkvCZXii8TGj7sbtEbQ=
