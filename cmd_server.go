@@ -22,7 +22,7 @@ import (
 
 const (
 	previewServerURL = "localhost:61433"
-	quitAfter        = 60 * time.Second
+	quitAfter        = 90 * time.Second
 )
 
 // previewURL returns a preview server URL.
@@ -62,7 +62,7 @@ func doStartServer() error {
 	}()
 
 	go func() {
-		c := time.Tick(10 * time.Second)
+		c := time.Tick(30 * time.Second)
 		for now := range c {
 			mu.Lock()
 			d := now.Sub(lastRequest)

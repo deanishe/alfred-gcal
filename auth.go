@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os/exec"
 	"sync"
+	"time"
 
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
@@ -253,6 +254,17 @@ func (a *Authenticator) codeFromLocalServer() (string, error) {
 		}
 	}()
 
+	// automatically close server after 3 minutes
+	timeout := time.AfterFunc(time.Minute*3, func() {
+		log.Println("[auth] automatically stopping server after timeout")
+		if err := srv.Shutdown(context.Background()); err != nil && err != http.ErrServerClosed {
+			log.Printf("[error] shutdown: %v", err)
+			c <- response{err: err}
+			return
+		}
+		c <- response{err: errors.New("OAuth server timeout exceeded")}
+	})
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		vars := req.URL.Query()
 		code := vars.Get("code")
@@ -296,6 +308,7 @@ func (a *Authenticator) codeFromLocalServer() (string, error) {
 	})
 
 	r := <-c
+	timeout.Stop()
 
 	// log.Printf("srv=%+v, response=%+v", srv, r)
 	if err := srv.Shutdown(context.Background()); err != nil {
