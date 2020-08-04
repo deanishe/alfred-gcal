@@ -49,6 +49,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/deanishe/awgo v0.25.0 h1:r6/eJFETRB6Zex10XbjixSASGlc2a484b+FgRRAYY9g=
 github.com/deanishe/awgo v0.25.0/go.mod h1:reRZEwXsMuJISYxmdqkn24KrHN+WV/ZQzRBXTtKDPHY=
+github.com/deanishe/awgo v0.27.0 h1:6CRv2eY4RxdyHWnmdOwduwQPVehuZwYaNVDwR+bXiEo=
+github.com/deanishe/awgo v0.27.0/go.mod h1:Qen3509y1/sj7a5syefWc6FQHO1LE/tyoTyN9jRv1vU=
 github.com/deanishe/go-env v0.4.0 h1:tpu14o16gJGTN/w2gxntwxu2l5Eby30jSrnlgOfjzwk=
 github.com/deanishe/go-env v0.4.0/go.mod h1:RgEcGAqdRnt8ybQteAbv1Ys2lWIRE7TlgON/sbdjuaY=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815 h1:bWDMxwH3px2JBh6AyO7hdCn/PkvCZXii8TGj7sbtEbQ=
@@ -148,6 +150,10 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+go.deanishe.net/env v0.5.1 h1:WiOncK5uJj8Um57Vj2dc1bq1lMN7fgRag9up7I3LZy0=
+go.deanishe.net/env v0.5.1/go.mod h1:ihEYfDm0K0hq3f5ACTCQDrMTWxH9fTiA1lh1i0aMqm0=
+go.deanishe.net/fuzzy v1.0.0 h1:3Qp6PCX0DLb9z03b5OHwAGsbRSkgJpSLncsiDdXDt4Y=
+go.deanishe.net/fuzzy v1.0.0/go.mod h1:2yEEMfG7jWgT1s5EO0TteVWmx2MXFBRMr5cMm84bQNY=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0 h1:C9hSCOW830chIVkdja34wa6Ky+IzWllkUinR+BtRZd4=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
