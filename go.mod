@@ -2,7 +2,7 @@ module github.com/deanishe/alfred-gcal
 
 require (
 	cloud.google.com/go v0.61.0 // indirect
-	github.com/deanishe/awgo v0.25.0
+	github.com/deanishe/awgo v0.27.1
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/magefile/mage v1.10.0
 	github.com/pkg/errors v0.9.1
