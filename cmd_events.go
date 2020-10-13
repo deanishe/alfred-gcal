@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"time"
 
 	aw "github.com/deanishe/awgo"
@@ -144,18 +145,30 @@ func doEvents() error {
 			Var("action", "open")
 
 		if e.Location != "" {
-			app := "Google Maps"
-			if opts.UseAppleMaps {
-				app = "Apple Maps"
-			}
+			re := regexp.MustCompile(`https:\/\/([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r, ]*)?`)
+			url := re.FindString(e.Location)
 
-			icon := ColouredIcon(iconMap, e.Colour)
-			it.NewModifier("cmd").
-				Subtitle("Open in "+app).
-				Arg(mapURL(e.Location)).
-				Valid(true).
-				Icon(icon).
-				Var("CALENDAR_APP", "") // Don't open Maps URLs in CALENDAR_APP
+			if url != "" {
+				it.NewModifier("cmd").
+					Subtitle("Open "+url).
+					Arg(url).
+					Valid(true).
+					Icon(icon).
+					Var("action", "open")
+			} else {
+				app := "Google Maps"
+				if opts.UseAppleMaps {
+					app = "Apple Maps"
+				}
+
+				icon := ColouredIcon(iconMap, e.Colour)
+				it.NewModifier("cmd").
+					Subtitle("Open in "+app).
+					Arg(mapURL(e.Location)).
+					Valid(true).
+					Icon(icon).
+					Var("CALENDAR_APP", "") // Don't open Maps URLs in CALENDAR_APP
+			}
 		}
 	}
 
